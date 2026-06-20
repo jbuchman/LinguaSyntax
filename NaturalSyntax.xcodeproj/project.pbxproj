@@ -15,28 +15,16 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
-				"UIPasteboard+extension.swift",
 			);
 			target = 78262C5B2FE6C8330099A294 /* NaturalSyntax */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
-/* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
-		78262C942FE6E71B0099A294 /* Exceptions for "NaturalSyntax" folder in "Copy Bundle Resources" phase from "NaturalSyntax" target */ = {
-			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
-			buildPhase = 78262C5A2FE6C8330099A294 /* Resources */;
-			membershipExceptions = (
-				"UIPasteboard+extension.swift",
-			);
-		};
-/* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		78262C5E2FE6C8330099A294 /* NaturalSyntax */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				78262C6E2FE6C8330099A294 /* Exceptions for "NaturalSyntax" folder in "NaturalSyntax" target */,
-				78262C942FE6E71B0099A294 /* Exceptions for "NaturalSyntax" folder in "Copy Bundle Resources" phase from "NaturalSyntax" target */,
 			);
 			path = NaturalSyntax;
 			sourceTree = "<group>";

@@ -17,6 +17,7 @@ class TextView: UITextView {
         let scope = scope(sender)
         copyAttributedText(for: scope)
         deleteText(for: scope)
+        delegate?.textViewDidChange?(self)
     }
     
     override func copy(_ sender: Any?) {
@@ -26,11 +27,13 @@ class TextView: UITextView {
     
     override func paste(_ sender: Any?) {
         pasteAttributedText()
+        delegate?.textViewDidChange?(self)
     }
         
     override func delete(_ sender: Any?) {
         let scope = scope(sender)
         deleteText(for: scope)
+        delegate?.textViewDidChange?(self)
     }
     
     override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {

@@ -49,12 +49,15 @@ class TextView: UITextView {
     }
     
     func scope(_ sender: Any?) -> Scope {
+        if sender is UIAction {
+            return .all
+        }
         if #available(iOS 26.0, *) {
-            if sender is UIAction || selectedRanges.isEmpty {
+            if selectedRanges.isEmpty {
                 return .all
             }
         } else {
-            if sender is UIAction || selectedRange.length == 0 {
+            if selectedRange.length == 0 {
                 return .all
             }
         }
@@ -63,23 +66,19 @@ class TextView: UITextView {
 
     func pasteAttributedText() {
         let plainKey = UTType.plainText.identifier
+        let plainUtf8Key = UTType.utf8PlainText.identifier
         let items = UIPasteboard.general.items
         
-        var parsedStrings: [NSAttributedString] = []
+        var parsedStrings: [String] = UIPasteboard.general.allPlainText
+        var parsedAttributedStrings: [NSAttributedString] = parsedStrings.map { NSAttributedString(string: $0, attributes: [.font: UIFont.preferredFont(forTextStyle: .body)]) }
         
-        for item in items {
-            if let plainText = item[plainKey] as? String {
-                parsedStrings.append(NSAttributedString(string: plainText, attributes: [.font: UIFont.preferredFont(forTextStyle: .body)]))
-            }
-        }
-        
-        guard !parsedStrings.isEmpty else { return }
+        guard !parsedAttributedStrings.isEmpty else { return }
         
         // Flatten non-contiguous nodes into a continuous layout stream using a newline divider
         let finalAttributedCombination = NSMutableAttributedString()
         let newline = NSAttributedString(string: "\n")
         
-        for (index, attrString) in parsedStrings.enumerated() {
+        for (index, attrString) in parsedAttributedStrings.enumerated() {
             finalAttributedCombination.append(attrString)
             if index < parsedStrings.count - 1 {
                 finalAttributedCombination.append(newline)

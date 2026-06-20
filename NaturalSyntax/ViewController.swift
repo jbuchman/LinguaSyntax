@@ -28,15 +28,24 @@ class ViewController: UIViewController {
                 UIAction(title: "Delete", image: UIImage(systemName: "trash"), attributes: .destructive, handler: textView.delete(_:)),
             ])
         ])
+        updateSyntaxHighlight()
     }
     
     override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
         textView.canPerformAction(action, withSender: sender)
     }
+    
+    func updateSyntaxHighlight() {
+        textView.attributedText = NSAttributedString(textView.text.highlightSyntax())
+        view.backgroundColor = Theme.dark.backgroundColor
+        overrideUserInterfaceStyle = Theme.dark.interfaceStyle
+        textView.overrideUserInterfaceStyle = Theme.dark.interfaceStyle
+        navigationController?.navigationBar.overrideUserInterfaceStyle = Theme.dark.interfaceStyle
+    }
 }
 
 extension ViewController: UITextViewDelegate {
     func textViewDidChange(_ textView: UITextView) {
-        print("textViewDidChange")
+        updateSyntaxHighlight()
     }
 }

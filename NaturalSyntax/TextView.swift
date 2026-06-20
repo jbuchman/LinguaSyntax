@@ -27,15 +27,7 @@ class TextView: UITextView {
     override func paste(_ sender: Any?) {
         pasteAttributedText()
     }
-    
-    override func selectAll(_ sender: Any?) {
-        if #available(iOS 26.0, *) {
-            selectedRanges = [NSRange(location: 0, length: attributedText.length)]
-        } else {
-            selectedRange = NSRange(location: 0, length: attributedText.length)
-        }
-    }
-    
+        
     override func delete(_ sender: Any?) {
         let scope = scope(sender)
         deleteText(for: scope)
@@ -76,22 +68,17 @@ class TextView: UITextView {
         // Approach 1: Check multi-item clipboard arrays (iOS 16+ non-contiguous ranges support)
         if UIPasteboard.general.items.count > 0 {
             for item in UIPasteboard.general.items {
-                // Try reading a raw UTF-8 binary stream payload first
+                // Priority 1: Explicitly check for raw UTF-8 binary plain text streams first
                 if let utf8Data = item[utf8Key] as? Data,
                    let decodedString = String(data: utf8Data, encoding: .utf8) {
                     extractedStrings.append(decodedString)
                     continue
                 }
                 
-                // Fall back to standard string type identifiers
+                // Priority 2: Fall back strictly to standard unstyled plain text identifiers
                 if let plainString = item[plainKey] as? String {
                     extractedStrings.append(plainString)
                     continue
-                }
-                
-                // Final generic string dictionary casting safety check
-                if let genericString = item.values.first as? String {
-                    extractedStrings.append(genericString)
                 }
             }
         }

@@ -4,6 +4,7 @@
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24743"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="Stack View standard spacing" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -54,6 +55,79 @@
             </objects>
             <point key="canvasLocation" x="589" y="177"/>
         </scene>
+        <!--Counter View Controller-->
+        <scene sceneID="OLG-6p-vHs">
+            <objects>
+                <viewController storyboardIdentifier="counter" id="KHs-W6-HqO" customClass="CounterViewController" customModule="NaturalSyntax" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="qx5-IC-kAZ">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="793"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <stackView opaque="NO" contentMode="scaleToFill" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="nkx-1b-esz">
+                                <rect key="frame" x="16" y="59" width="361" height="70"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Characters:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7xH-5u-G2V">
+                                        <rect key="frame" x="0.0" y="0.0" width="88.666666666666671" height="70"/>
+                                        <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
+                                        <color key="textColor" red="1" green="0.57810515169999999" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="O0o-O6-zwO" userLabel="0">
+                                        <rect key="frame" x="96.666666666666671" y="0.0" width="10.333333333333329" height="70"/>
+                                        <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
+                                        <color key="textColor" red="1" green="0.57810515169999999" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="cU7-vz-AMS">
+                                        <rect key="frame" x="114.99999999999999" y="0.0" width="165.66666666666663" height="70"/>
+                                    </view>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Words:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Gzj-Qz-aV3">
+                                        <rect key="frame" x="288.66666666666669" y="0.0" width="54" height="70"/>
+                                        <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
+                                        <color key="textColor" red="1" green="0.57810515169999999" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7sy-Dh-H2H">
+                                        <rect key="frame" x="350.66666666666669" y="0.0" width="10.333333333333314" height="70"/>
+                                        <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
+                                        <color key="textColor" red="1" green="0.57810515169999999" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="70" id="VKx-0f-jrN"/>
+                                </constraints>
+                            </stackView>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" textAlignment="natural" adjustsFontForContentSizeCategory="YES" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="QcI-Kt-N7y">
+                                <rect key="frame" x="16" y="137" width="361" height="640"/>
+                                <color key="textColor" systemColor="labelColor"/>
+                                <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="12K-yi-j5n"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstAttribute="trailingMargin" secondItem="nkx-1b-esz" secondAttribute="trailing" id="KfC-Bf-CDO"/>
+                            <constraint firstItem="12K-yi-j5n" firstAttribute="trailing" secondItem="QcI-Kt-N7y" secondAttribute="trailing" constant="16" id="NS2-CF-yhl"/>
+                            <constraint firstItem="12K-yi-j5n" firstAttribute="bottom" secondItem="QcI-Kt-N7y" secondAttribute="bottom" constant="16" id="OcL-6W-bn6"/>
+                            <constraint firstItem="nkx-1b-esz" firstAttribute="top" secondItem="qx5-IC-kAZ" secondAttribute="topMargin" id="UNi-PB-ekv"/>
+                            <constraint firstItem="nkx-1b-esz" firstAttribute="leading" secondItem="qx5-IC-kAZ" secondAttribute="leadingMargin" id="UQM-8s-j07"/>
+                            <constraint firstItem="QcI-Kt-N7y" firstAttribute="leading" secondItem="12K-yi-j5n" secondAttribute="leading" constant="16" id="ZOK-5I-cBM"/>
+                            <constraint firstItem="QcI-Kt-N7y" firstAttribute="top" secondItem="12K-yi-j5n" secondAttribute="top" constant="78" id="ceI-aG-ths"/>
+                        </constraints>
+                    </view>
+                    <modalPageSheetSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+                    <connections>
+                        <outlet property="characterLabel" destination="O0o-O6-zwO" id="Xqv-57-628"/>
+                        <outlet property="partsOfSpeechTextView" destination="QcI-Kt-N7y" id="aQh-IA-Ls6"/>
+                        <outlet property="wordLabel" destination="7sy-Dh-H2H" id="r1i-CB-NvG"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="ECE-qX-Gyo" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1312" y="177"/>
+        </scene>
         <!--Navigation Controller-->
         <scene sceneID="hp4-if-i6l">
             <objects>
@@ -61,6 +135,9 @@
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="BmE-zF-k8J">
                         <rect key="frame" x="0.0" y="118" width="393" height="54"/>
                         <autoresizingMask key="autoresizingMask"/>
+                        <textAttributes key="titleTextAttributes">
+                            <color key="textColor" red="1" green="0.57810515169999999" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        </textAttributes>
                     </navigationBar>
                     <connections>
                         <segue destination="BYZ-38-t0r" kind="relationship" relationship="rootViewController" id="kZY-gY-0EV"/>

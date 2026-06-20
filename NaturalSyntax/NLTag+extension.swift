@@ -11,7 +11,11 @@ import UIKit
 
 extension NLTag {
     /// Apply tag attributes to the specified range.
-    public func attributedString(string: Substring, theme: Theme) -> AttributedString {
+    public func attributedString(substring: Substring, theme: Theme) -> AttributedString {
+        attributedString(string: String(substring), theme: theme)
+    }
+    
+    public func attributedString(string: String, theme: Theme) -> AttributedString {
         var attributedString = AttributedString(string)
         
         if let foregroundColor = theme.foregroundColor(for: self) {

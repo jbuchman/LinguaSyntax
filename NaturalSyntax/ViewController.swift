@@ -11,7 +11,8 @@ import UIKit
 class ViewController: UIViewController {
     @IBOutlet weak var textView: TextView!
     @IBOutlet weak var moreButton: UIBarButtonItem!
-    
+    @IBOutlet weak var placeholderLabel: UILabel!
+        
     override func viewDidLoad() {
         super.viewDidLoad()
         textView.delegate = self
@@ -28,6 +29,10 @@ class ViewController: UIViewController {
                 UIAction(title: "Delete", image: UIImage(systemName: "trash"), attributes: .destructive, handler: textView.delete(_:)),
             ])
         ])
+
+        navigationController?.navigationBar.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(resetFocus)))
+        textView.textContainerInset = .zero
+        textView.textContainer.lineFragmentPadding = 0
         updateSyntaxHighlight()
     }
     
@@ -35,8 +40,21 @@ class ViewController: UIViewController {
         textView.canPerformAction(action, withSender: sender)
     }
     
+    @objc func resetFocus() {
+        textView.resignFirstResponder()
+    }
+    
     func updateSyntaxHighlight() {
-        textView.attributedText = NSAttributedString(textView.text.highlightSyntax())
+        if !textView.isFirstResponder, textView.text.isEmpty, let string = placeholderLabel.text {
+            placeholderLabel.attributedText = NSAttributedString(string: string, attributes: [
+                .font: Theme.dark.font,
+                .foregroundColor: Theme.dark.foregroundColor
+            ])
+            placeholderLabel.isHidden = false
+        } else {
+            textView.attributedText = NSAttributedString(textView.text.highlightSyntax())
+            placeholderLabel.isHidden = true
+        }
         view.backgroundColor = Theme.dark.backgroundColor
         overrideUserInterfaceStyle = Theme.dark.interfaceStyle
         textView.overrideUserInterfaceStyle = Theme.dark.interfaceStyle
@@ -46,6 +64,14 @@ class ViewController: UIViewController {
 
 extension ViewController: UITextViewDelegate {
     func textViewDidChange(_ textView: UITextView) {
+        updateSyntaxHighlight()
+    }
+    
+    func textViewDidBeginEditing(_ textView: UITextView) {
+        updateSyntaxHighlight()
+    }
+
+    func textViewDidEndEditing(_ textView: UITextView) {
         updateSyntaxHighlight()
     }
 }

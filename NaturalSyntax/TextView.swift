@@ -119,7 +119,7 @@ class TextView: UITextView {
     }
 
     func pasteAttributedText() {
-        let parsedAttributedStrings: [NSAttributedString] = allPasteboardText.map { NSAttributedString(string: $0, attributes: [.font: UIFont.preferredFont(forTextStyle: .body)]) }
+        let parsedAttributedStrings: [NSAttributedString] = allPasteboardText.map { NSAttributedString(string: $0, attributes: [.font: Theme.dark.font]) }
         
         guard !parsedAttributedStrings.isEmpty else { return }
         

@@ -25,7 +25,11 @@ public enum Theme {
         default: return .white
         }
     }
-    
+
+    public var foregroundColor: UIColor {
+        return #colorLiteral(red: 0.8274509804, green: 0.8156862745, blue: 0.7843137255, alpha: 1)
+    }
+
     public func underlineStyle(for tag: NLTag) -> NSUnderlineStyle? {
         switch (self, tag) {
         case (.dark, .placeName): return .single

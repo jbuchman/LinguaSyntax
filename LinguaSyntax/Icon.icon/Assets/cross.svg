@@ -5,7 +5,7 @@
    viewBox="0 0 1024 1024"
    version="1.1"
    id="svg1"
-   sodipodi:docname="icon.svg"
+   sodipodi:docname="cross.svg"
    inkscape:version="1.4.3 (0d15f75, 2025-12-25)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
@@ -32,7 +32,7 @@
      inkscape:window-maximized="0"
      inkscape:current-layer="svg1" />
   <rect
-     style="fill:#ee1160;fill-opacity:1;stroke-width:1.07926"
+     style="fill:#ff0045;fill-opacity:1;stroke-width:1.07926"
      id="rect2"
      width="732.12109"
      height="153.01567"

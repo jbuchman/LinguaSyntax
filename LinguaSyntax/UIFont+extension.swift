@@ -1,6 +1,6 @@
 //
 //  UIFont+extension.swift
-//  NaturalSyntax
+//  LinguaSyntax
 //
 //  Created by Jeremy Buchman on 6/20/26.
 //

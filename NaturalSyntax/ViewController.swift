@@ -6,22 +6,37 @@
 //
 
 import UIKit
+import Combine
 
 class ViewController: UIViewController {
-    @IBOutlet weak var textView: TextView!
+    @IBOutlet weak var textView: TextView! { didSet {
+        textView.delegate = self
+        textView.textContainerInset = .zero
+        textView.textContainer.lineFragmentPadding = 0
+    }}
     @IBOutlet weak var moreButton: UIBarButtonItem!
     @IBOutlet weak var placeholderLabel: UILabel!
-        
+    let settings = Settings()
+    var cancellables: Set<AnyCancellable> = []
+
     lazy var counterViewController: CounterViewController? = {
-        storyboard?.instantiateViewController(identifier: "counter")
+        storyboard?.instantiateViewController(identifier: "counter") { coder in
+            CounterViewController(coder: coder, settings: self.settings)
+        }
     }()
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        textView.delegate = self
+    private func select(theme: Theme) {
+        settings.theme = theme
+    }
+    
+    private func generateMenu(theme currentTheme: Theme) {
+        let themes: [UIAction] = Theme.allCases.map { theme in
+            UIAction(title: theme.name, state: theme == currentTheme ? .on : .off, handler: { _ in self.select(theme: theme)
+            })
+        }
         
-        // Setup UIBarButton pop-up menu interactions safely utilizing text view responders
         moreButton.menu = UIMenu(children: [
+            UIMenu(title: "Theme", children: themes),
             UIMenu(options: [.displayInline], children: [
                 UIAction(title: "Cut", image: UIImage(systemName: "scissors"), handler: textView.cut(_:)),
                 UIAction(title: "Copy", image: UIImage(systemName: "doc.on.doc"), handler: textView.copy(_:)),
@@ -34,13 +49,21 @@ class ViewController: UIViewController {
                 UIAction(title: "Delete", image: UIImage(systemName: "trash"), attributes: .destructive, handler: textView.delete(_:)),
             ])
         ])
+    }
 
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
         navigationController?.navigationBar.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(resetFocus)))
         
-        textView.textContainerInset = .zero
-        textView.textContainer.lineFragmentPadding = 0
-        textView.text = UserDefaults.standard.string(forKey: "text")
-        updateSyntaxHighlight()
+        settings.$text.receive(on: DispatchQueue.main).sink(receiveValue: { text in
+            self.textView.text = text
+        }).store(in: &cancellables)
+        
+        settings.$theme.receive(on: DispatchQueue.main).sink(receiveValue: { theme in
+            self.generateMenu(theme: theme)
+            self.updateSyntaxHighlight(theme: theme)
+        }).store(in: &cancellables)
     }
         
     override func viewWillAppear(_ animated: Bool) {
@@ -66,7 +89,6 @@ class ViewController: UIViewController {
         }
 
         present(counterViewController, animated: true)
-        counterViewController.contentUpdate(string: textView.text)
     }
 
     override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
@@ -77,22 +99,23 @@ class ViewController: UIViewController {
         textView.resignFirstResponder()
     }
     
-    func updateSyntaxHighlight() {
+    private func updateSyntaxHighlight(theme: Theme? = nil) {
+        let theme = theme ?? settings.theme
         if !textView.isFirstResponder, textView.text.isEmpty, let string = placeholderLabel.text {
             placeholderLabel.attributedText = NSAttributedString(string: string, attributes: [
-                .font: Theme.dark.font,
+                .font: theme.font,
                 .foregroundColor: Theme.dark.foregroundColor
             ])
             placeholderLabel.isHidden = false
         } else {
-            textView.attributedText = NSAttributedString(textView.text.highlightSyntax())
+            textView.attributedText = NSAttributedString(textView.text.highlightSyntax(theme: theme))
             placeholderLabel.isHidden = true
         }
-        view.backgroundColor = Theme.dark.backgroundColor
-        overrideUserInterfaceStyle = Theme.dark.interfaceStyle
-        textView.overrideUserInterfaceStyle = Theme.dark.interfaceStyle
-        navigationController?.navigationBar.overrideUserInterfaceStyle = Theme.dark.interfaceStyle
-        counterViewController?.overrideUserInterfaceStyle = Theme.dark.interfaceStyle
+        view.backgroundColor = theme.backgroundColor
+        overrideUserInterfaceStyle = theme.interfaceStyle
+        textView.overrideUserInterfaceStyle = theme.interfaceStyle
+        navigationController?.navigationBar.overrideUserInterfaceStyle = theme.interfaceStyle
+        counterViewController?.overrideUserInterfaceStyle = theme.interfaceStyle
     }
 }
 
@@ -100,8 +123,7 @@ class ViewController: UIViewController {
 extension ViewController: UITextViewDelegate {
     func textViewDidChange(_ textView: UITextView) {
         updateSyntaxHighlight()
-        counterViewController?.contentUpdate(string: textView.text)
-        UserDefaults.standard.set(textView.text, forKey: "text")
+        settings.text = textView.text
     }
     
     func textViewDidBeginEditing(_ textView: UITextView) {

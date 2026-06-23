@@ -1,5 +1,4 @@
 # Next Features:
-1. Theme Selection
-2. Text size +/-
-3. Actions/Extensions
-4. custom theme
+1. Text size +/-
+2. Actions/Extensions
+3. custom theme

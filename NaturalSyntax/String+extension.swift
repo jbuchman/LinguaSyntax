@@ -10,7 +10,7 @@ import NaturalLanguage
 
 extension String {
     /// Apply syntax highlighting to the attributed string.
-    func highlightSyntax(theme: Theme = .dark, options: NLTagger.Options = [.joinNames]) -> AttributedString {
+    func highlightSyntax(theme: Theme, options: NLTagger.Options = [.joinNames]) -> AttributedString {
         guard !self.isEmpty else {
             return AttributedString(self)
         }
@@ -44,7 +44,7 @@ extension String {
         return tokens.count
     }
 
-    func partsOfSpeech(theme: Theme = .dark) -> AttributedString {
+    func partsOfSpeech(theme: Theme) -> AttributedString {
         guard !self.isEmpty else {
             return AttributedString()
         }

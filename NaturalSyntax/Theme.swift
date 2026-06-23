@@ -9,8 +9,26 @@ import UIKit
 import SwiftUI
 import NaturalLanguage
 
-public enum Theme {
+public enum Theme: String, CaseIterable {
     case office, scholastic, dark
+    
+    func secondaryBackground(traitCollection: UITraitCollection) -> UIColor {
+        let baseTraits = traitCollection.modifyingTraits { mutableTraits in
+            // Explicitly downgrade the sheet's elevation level to flat base
+            mutableTraits.userInterfaceLevel = .base
+        }
+
+        return UIColor.secondarySystemBackground.resolvedColor(with: baseTraits)
+    }
+    
+    var name: String {
+        switch self
+        {
+        case .office: return "Office"
+        case .scholastic: return "Scholastic"
+        case .dark: return "Dark"
+        }
+    }
     
     public var interfaceStyle: UIUserInterfaceStyle {
         switch self {
@@ -27,7 +45,10 @@ public enum Theme {
     }
 
     public var foregroundColor: UIColor {
-        return #colorLiteral(red: 0.8274509804, green: 0.8156862745, blue: 0.7843137255, alpha: 1)
+        switch self {
+        case .dark: #colorLiteral(red: 0.8274509804, green: 0.8156862745, blue: 0.7843137255, alpha: 1)
+        default: #colorLiteral(red: 0.1725490196, green: 0.1843137255, blue: 0.2156862745, alpha: 1)
+        }
     }
 
     public func underlineStyle(for tag: NLTag) -> NSUnderlineStyle? {

@@ -7,39 +7,52 @@
 
 import UIKit
 import NaturalLanguage
-
-enum Constants {
-    static let minimizedIdentifier = UISheetPresentationController.Detent.Identifier("minimized")
-}
+import Combine
 
 class CounterViewController: UIViewController {
     @IBOutlet weak var characterLabel: UILabel!
     @IBOutlet weak var wordLabel: UILabel!
     @IBOutlet weak var partsOfSpeechTextView: UITextView!
-  
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        updateBackgroundColor()
+    let settings: Settings
+    var cancellables: Set<AnyCancellable> = []
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        settings.$theme.receive(on: DispatchQueue.main).sink(receiveValue: { theme in
+            self.updateBackgroundColor(theme: theme)
+            self.contentUpdate(theme: theme)
+        }).store(in: &cancellables)
+
+        settings.$text.receive(on: DispatchQueue.main).sink(receiveValue: { text in
+            self.contentUpdate(text: text)
+        }).store(in: &cancellables)
     }
     
-    func contentUpdate(string: String) {
-        wordLabel.text = "\(string.wordCount)"
-        characterLabel.text = "\(string.count)"
-        partsOfSpeechTextView.attributedText = NSAttributedString(string.partsOfSpeech())
+    init?(coder: NSCoder, settings: Settings) {
+        self.settings = settings
+        super.init(coder: coder)
     }
     
-    func updateBackgroundColor() {
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    private func contentUpdate(text: String? = nil, theme: Theme? = nil) {
+        let text = text ?? settings.text
+        let theme = theme ?? settings.theme
+        wordLabel.text = "\(text.wordCount)"
+        characterLabel.text = "\(text.count)"
+        partsOfSpeechTextView.attributedText = NSAttributedString(text.partsOfSpeech(theme: theme))
+    }
+    
+    func updateBackgroundColor(theme: Theme? = nil) {
+        let theme = theme ?? settings.theme
         sheetPresentationController?.animateChanges { [weak self] in
             guard let self else {
                 return
             }
-            let baseTraits = traitCollection.modifyingTraits { mutableTraits in
-                // Explicitly downgrade the sheet's elevation level to flat base
-                mutableTraits.userInterfaceLevel = .base
-            }
 
-            view.backgroundColor = UIColor.secondarySystemBackground.resolvedColor(with: baseTraits)
-            
+            view.backgroundColor = theme.secondaryBackground(traitCollection: traitCollection)
             if sheetPresentationController?.selectedDetentIdentifier == Constants.minimizedIdentifier {
                 partsOfSpeechTextView.isHidden = true
             } else {

@@ -7,6 +7,7 @@
 
 import UIKit
 import Combine
+import NaturalLanguage
 
 class ViewController: UIViewController {
     @IBOutlet weak var textView: TextView! { didSet {
@@ -85,16 +86,45 @@ class ViewController: UIViewController {
             ])
             placeholderLabel.isHidden = false
         } else {
-            let selectedRange = textView.selectedRange
-            textView.attributedText = NSAttributedString(textView.text.highlightSyntax(theme: theme))
-            textView.selectedRange = selectedRange
             placeholderLabel.isHidden = true
+            applySyntaxHighlight(theme: theme)
         }
         view.backgroundColor = theme.backgroundColor
         overrideUserInterfaceStyle = theme.interfaceStyle
         textView.overrideUserInterfaceStyle = theme.interfaceStyle
         navigationController?.navigationBar.overrideUserInterfaceStyle = theme.interfaceStyle
         counterViewController?.overrideUserInterfaceStyle = theme.interfaceStyle
+    }
+
+    private func applySyntaxHighlight(theme: Theme) {
+        textView.typingAttributes = Theme.textAttributes(theme: theme)
+
+        guard textView.markedTextRange == nil else {
+            return
+        }
+
+        let string = textView.text ?? ""
+        guard !string.isEmpty else {
+            return
+        }
+
+        let fullRange = NSRange(location: 0, length: textView.textStorage.length)
+        textView.textStorage.beginEditing()
+        textView.textStorage.removeAttribute(.underlineStyle, range: fullRange)
+        textView.textStorage.addAttributes(Theme.textAttributes(theme: theme), range: fullRange)
+
+        let tagger = NLTagger(tagSchemes: [.nameTypeOrLexicalClass])
+        tagger.string = string
+        tagger.enumerateTags(in: string.startIndex..<string.endIndex, unit: .word, scheme: .nameTypeOrLexicalClass, options: [.joinNames]) { tag, tokenRange in
+            guard let tag else {
+                return true
+            }
+
+            textView.textStorage.addAttributes(tag.textAttributes(theme: theme), range: NSRange(tokenRange, in: string))
+            return true
+        }
+
+        textView.textStorage.endEditing()
     }
 }
 

@@ -16,27 +16,56 @@ extension NLTag {
     }
     
     public func attributedString(string: String, theme: Theme) -> AttributedString {
+        let style = textStyle(theme: theme)
         var attributedString = AttributedString(string)
         
-        if let foregroundColor = theme.foregroundColor(for: self) {
+        if let foregroundColor = style.foregroundColor {
             attributedString.foregroundColor = foregroundColor
         }
         
-        if let underlineStyle = theme.underlineStyle(for: self) {
+        if let underlineStyle = style.underlineStyle {
             attributedString.underlineStyle = underlineStyle
         }
         
-        var font = theme.font
-        if theme.isBold(for: self) || theme.isItalic(for: self) {
-            if theme.isBold(for: self) {
-                font = font.bold()
-            }
-            if theme.isItalic(for: self) {
-                font = font.italic()
-            }
-        }
-        attributedString.font = font
+        attributedString.font = style.font
         
         return attributedString
     }
+
+    public func textAttributes(theme: Theme) -> [NSAttributedString.Key: Any] {
+        let style = textStyle(theme: theme)
+        var attributes = Theme.textAttributes(theme: theme)
+
+        if let foregroundColor = style.foregroundColor {
+            attributes[.foregroundColor] = foregroundColor
+        }
+
+        if let underlineStyle = style.underlineStyle {
+            attributes[.underlineStyle] = underlineStyle.rawValue
+        }
+
+        attributes[.font] = style.font
+        return attributes
+    }
+
+    private func textStyle(theme: Theme) -> TagTextStyle {
+        var font = theme.font
+        if theme.isBold(for: self) {
+            font = font.bold()
+        }
+        if theme.isItalic(for: self) {
+            font = font.italic()
+        }
+        return TagTextStyle(
+            foregroundColor: theme.foregroundColor(for: self),
+            underlineStyle: theme.underlineStyle(for: self),
+            font: font
+        )
+    }
+}
+
+private struct TagTextStyle {
+    let foregroundColor: UIColor?
+    let underlineStyle: NSUnderlineStyle?
+    let font: UIFont
 }

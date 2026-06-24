@@ -68,6 +68,13 @@ public enum Theme: String, CaseIterable {
     public var font: UIFont {
         .preferredFont(forTextStyle: .body)
     }
+
+    public static func textAttributes(theme: Theme) -> [NSAttributedString.Key: Any] {
+        [
+            .font: theme.font,
+            .foregroundColor: UIColor.label
+        ]
+    }
     
     public func foregroundColor(for tag: NLTag) -> UIColor? {
         switch (self, tag) {

@@ -63,7 +63,7 @@
         </scene>
     </scenes>
     <resources>
-        <image name="RenderedIcon" width="3072" height="3072"/>
+        <image name="RenderedIcon" width="512" height="512"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

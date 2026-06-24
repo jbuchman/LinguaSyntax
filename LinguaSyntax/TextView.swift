@@ -27,7 +27,6 @@ class TextView: UITextView {
     
     override func paste(_ sender: Any?) {
         pasteAttributedText()
-        delegate?.textViewDidChange?(self)
     }
         
     override func delete(_ sender: Any?) {
@@ -44,9 +43,6 @@ class TextView: UITextView {
     }
     
     func scope(_ sender: Any?) -> Scope {
-        if sender is UIAction {
-            return .all
-        }
         if #available(iOS 26.0, *) {
             if selectedRanges.isEmpty {
                 return .all
@@ -57,6 +53,25 @@ class TextView: UITextView {
             }
         }
         return .selection
+    }
+
+    func cutAll() {
+        copyAttributedText(for: .all)
+        deleteText(for: .all)
+        delegate?.textViewDidChange?(self)
+    }
+
+    func copyAll() {
+        copyAttributedText(for: .all)
+    }
+
+    func replaceAllWithPasteboardText() {
+        pasteAttributedText(replacing: .all)
+    }
+
+    func deleteAll() {
+        deleteText(for: .all)
+        delegate?.textViewDidChange?(self)
     }
 
     /// Scans the pasteboard for any available plain text format (UTF-8 data, plain text strings, or multi-item blocks)
@@ -108,7 +123,7 @@ class TextView: UITextView {
         return extractedStrings.filter { !$0.isEmpty }
     }
 
-    func pasteAttributedText() {
+    func pasteAttributedText(replacing scope: Scope = .selection) {
         let parsedAttributedStrings: [NSAttributedString] = allPasteboardText.map { NSAttributedString(string: $0, attributes: [.font: Theme.dark.font]) }
         
         guard !parsedAttributedStrings.isEmpty else { return }
@@ -124,15 +139,22 @@ class TextView: UITextView {
             }
         }
         
-        // Safely splice the reconstructed string back into active editor cursor coordinates
-        let currentSelectedNSRange = selectedRange
+        let replacementRange: NSRange
+        switch scope {
+        case .all:
+            replacementRange = NSRange(location: 0, length: attributedText.length)
+
+        case .selection:
+            replacementRange = selectedRange
+        }
+
         let currentMutable = NSMutableAttributedString(attributedString: attributedText)
         
-        currentMutable.replaceCharacters(in: currentSelectedNSRange, with: finalAttributedCombination)
+        currentMutable.replaceCharacters(in: replacementRange, with: finalAttributedCombination)
         attributedText = currentMutable
         
         // Re-collapse cursor anchor target cleanly right after inserted payload length
-        let targetEndLocation = currentSelectedNSRange.location + finalAttributedCombination.length
+        let targetEndLocation = replacementRange.location + finalAttributedCombination.length
         selectedRange = NSRange(location: targetEndLocation, length: 0)
         delegate?.textViewDidChange?(self)
     }

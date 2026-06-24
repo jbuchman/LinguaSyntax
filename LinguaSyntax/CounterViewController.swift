@@ -17,7 +17,7 @@ class CounterViewController: UIViewController {
     @IBOutlet weak var counterSpacerView: UIView!
     @IBOutlet weak var moreButtonContainerView: UIView!
     let settings: Settings
-    weak var sourceTextView: UITextView?
+    weak var sourceTextView: TextView?
     var cancellables: Set<AnyCancellable> = []
     
     override func viewDidLoad() {
@@ -25,7 +25,7 @@ class CounterViewController: UIViewController {
 
         settings.$theme.receive(on: DispatchQueue.main).sink(receiveValue: { theme in
             self.generateMenu(theme: theme)
-            self.updateBackgroundColor(theme: theme)
+            self.updateAppearance(theme: theme)
             self.contentUpdate(theme: theme)
         }).store(in: &cancellables)
 
@@ -34,7 +34,7 @@ class CounterViewController: UIViewController {
         }).store(in: &cancellables)
     }
     
-    init?(coder: NSCoder, settings: Settings, sourceTextView: UITextView) {
+    init?(coder: NSCoder, settings: Settings, sourceTextView: TextView) {
         self.settings = settings
         self.sourceTextView = sourceTextView
         super.init(coder: coder)
@@ -70,14 +70,14 @@ class CounterViewController: UIViewController {
         moreButton.menu = UIMenu(children: [
             UIMenu(title: "Theme", children: themes),
             UIMenu(options: [.displayInline], children: [
-                UIAction(title: "Cut", image: UIImage(systemName: "scissors")) { [weak self] action in
-                    self?.sourceTextView?.cut(action)
+                UIAction(title: "Cut All", image: UIImage(systemName: "scissors")) { [weak self] _ in
+                    self?.sourceTextView?.cutAll()
                 },
-                UIAction(title: "Copy", image: UIImage(systemName: "doc.on.doc")) { [weak self] action in
-                    self?.sourceTextView?.copy(action)
+                UIAction(title: "Copy All", image: UIImage(systemName: "doc.on.doc")) { [weak self] _ in
+                    self?.sourceTextView?.copyAll()
                 },
-                UIAction(title: "Paste", image: UIImage(systemName: "document.on.clipboard")) { [weak self] action in
-                    self?.sourceTextView?.paste(action)
+                UIAction(title: "Replace All", image: UIImage(systemName: "document.on.clipboard")) { [weak self] _ in
+                    self?.sourceTextView?.replaceAllWithPasteboardText()
                 },
             ]),
             UIMenu(options: .displayInline, children: [
@@ -86,26 +86,31 @@ class CounterViewController: UIViewController {
                 },
             ]),
             UIMenu(options: .displayInline, children: [
-                UIAction(title: "Delete", image: UIImage(systemName: "trash"), attributes: .destructive) { [weak self] action in
-                    self?.sourceTextView?.delete(action)
+                UIAction(title: "Delete All", image: UIImage(systemName: "trash"), attributes: .destructive) { [weak self] _ in
+                    self?.sourceTextView?.deleteAll()
                 },
             ])
         ])
     }
     
-    func updateBackgroundColor(theme: Theme? = nil) {
+    func updateAppearance(theme: Theme? = nil) {
         let theme = theme ?? settings.theme
-        sheetPresentationController?.animateChanges { [weak self] in
-            guard let self else {
-                return
-            }
 
+        overrideUserInterfaceStyle = theme.interfaceStyle
+        partsOfSpeechTextView.overrideUserInterfaceStyle = theme.interfaceStyle
+        partsOfSpeechTextView.backgroundColor = .clear
+        partsOfSpeechTextView.typingAttributes = Theme.textAttributes(theme: theme)
+
+        let updateViews = { [weak self] in
+            guard let self else { return }
             view.backgroundColor = theme.secondaryBackground(traitCollection: traitCollection)
-            if sheetPresentationController?.selectedDetentIdentifier == Constants.minimizedIdentifier {
-                partsOfSpeechTextView.isHidden = true
-            } else {
-                partsOfSpeechTextView.isHidden = false
-            }
+            partsOfSpeechTextView.isHidden = sheetPresentationController?.selectedDetentIdentifier == Constants.minimizedIdentifier
+        }
+
+        if let sheetPresentationController {
+            sheetPresentationController.animateChanges(updateViews)
+        } else {
+            updateViews()
         }
     }
 }

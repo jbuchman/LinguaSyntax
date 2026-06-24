@@ -163,6 +163,6 @@ extension ViewController: UIAdaptivePresentationControllerDelegate, UISheetPrese
     
     // Triggers automatically the exact instant the sheet successfully settles into a detent position
     func sheetPresentationControllerDidChangeSelectedDetentIdentifier(_ sheetPresentationController: UISheetPresentationController) {
-        counterViewController?.updateBackgroundColor()
+        counterViewController?.updateAppearance()
     }
 }

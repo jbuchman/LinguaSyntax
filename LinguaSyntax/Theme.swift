@@ -16,6 +16,7 @@ public enum Theme: String, CaseIterable {
         let baseTraits = traitCollection.modifyingTraits { mutableTraits in
             // Explicitly downgrade the sheet's elevation level to flat base
             mutableTraits.userInterfaceLevel = .base
+            mutableTraits.userInterfaceStyle = interfaceStyle
         }
 
         return UIColor.secondarySystemBackground.resolvedColor(with: baseTraits)

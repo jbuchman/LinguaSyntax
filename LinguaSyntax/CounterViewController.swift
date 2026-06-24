@@ -22,17 +22,12 @@ class CounterViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        counterSpacerView.setContentHuggingPriority(.defaultLow, for: .horizontal)
-        counterSpacerView.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
-        moreButtonContainerView.setContentHuggingPriority(.required, for: .horizontal)
-        moreButtonContainerView.setContentCompressionResistancePriority(.required, for: .horizontal)
-        moreButtonContainerView.widthAnchor.constraint(greaterThanOrEqualToConstant: 44).isActive = true
 
         moreButton.showsMenuAsPrimaryAction = true
         moreButton.accessibilityLabel = "More"
         
         if #available(iOS 26.0, *) {
-            var configuration = UIButton.Configuration.glass()
+            var configuration = UIButton.Configuration.prominentClearGlass()
             configuration.image = UIImage(systemName: "ellipsis")
             moreButton.configuration = configuration
         } else {
@@ -58,6 +53,10 @@ class CounterViewController: UIViewController {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    @IBAction private func resetFocus() {
+        sourceTextView?.resignFirstResponder()
     }
     
     private func contentUpdate(text: String? = nil, theme: Theme? = nil) {

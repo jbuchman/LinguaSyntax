@@ -81,7 +81,7 @@ class ViewController: UIViewController {
         if !textView.isFirstResponder, textView.text.isEmpty, let string = placeholderLabel.text {
             placeholderLabel.attributedText = NSAttributedString(string: string, attributes: [
                 .font: theme.font,
-                .foregroundColor: Theme.dark.foregroundColor
+                .foregroundColor: UIColor.secondaryLabel
             ])
             placeholderLabel.isHidden = false
         } else {

@@ -44,13 +44,6 @@ public enum Theme: String, CaseIterable {
         }
     }
 
-    public var foregroundColor: UIColor {
-        switch self {
-        case .dark: #colorLiteral(red: 0.8274509804, green: 0.8156862745, blue: 0.7843137255, alpha: 1)
-        default: #colorLiteral(red: 0.1725490196, green: 0.1843137255, blue: 0.2156862745, alpha: 1)
-        }
-    }
-
     public func underlineStyle(for tag: NLTag) -> NSUnderlineStyle? {
         switch (self, tag) {
         case (.dark, .placeName): return .single

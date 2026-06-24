@@ -65,7 +65,7 @@ extension String {
         let attributedStrings = tags.sorted(by: { $0.value > $1.value }).map { (tag, count) -> AttributedString in
             let label = tag.attributedString(string: tag.rawValue, theme: theme)
             var count = AttributedString(String(count))
-            count.foregroundColor = theme.foregroundColor
+            count.foregroundColor = .secondaryLabel
             count.font = theme.font
             return label + separator + count
         }

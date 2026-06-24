@@ -94,7 +94,7 @@
                                     <view contentMode="scaleToFill" horizontalHuggingPriority="1000" horizontalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="y5P-Ro-jb5">
                                         <rect key="frame" x="317" y="0.0" width="44" height="70"/>
                                         <subviews>
-                                            <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="1000" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="BTn-Mo-Re1">
+                                            <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="1000" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="BTn-Mo-Re1" customClass="MoreMenuButton" customModule="LinguaSyntax" customModuleProvider="target">
                                                 <rect key="frame" x="0.0" y="13" width="44" height="44"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="44" id="6S1-mT-os6"/>

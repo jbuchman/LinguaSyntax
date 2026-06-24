@@ -13,7 +13,7 @@ class CounterViewController: UIViewController {
     @IBOutlet weak var characterLabel: UILabel!
     @IBOutlet weak var wordLabel: UILabel!
     @IBOutlet weak var partsOfSpeechTextView: UITextView!
-    @IBOutlet weak var moreButton: UIButton!
+    @IBOutlet weak var moreButton: MoreMenuButton!
     @IBOutlet weak var counterSpacerView: UIView!
     @IBOutlet weak var moreButtonContainerView: UIView!
     let settings: Settings
@@ -22,17 +22,6 @@ class CounterViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        moreButton.showsMenuAsPrimaryAction = true
-        moreButton.accessibilityLabel = "More"
-        
-        if #available(iOS 26.0, *) {
-            var configuration = UIButton.Configuration.prominentClearGlass()
-            configuration.image = UIImage(systemName: "ellipsis")
-            moreButton.configuration = configuration
-        } else {
-            moreButton.setImage(UIImage(systemName: "ellipsis"), for: .normal)
-        }
 
         settings.$theme.receive(on: DispatchQueue.main).sink(receiveValue: { theme in
             self.generateMenu(theme: theme)

@@ -8,7 +8,6 @@
 import NaturalLanguage
 import Testing
 import UIKit
-import UniformTypeIdentifiers
 @testable import LinguaSyntax
 
 @MainActor
@@ -52,16 +51,10 @@ struct TextViewTests {
     }
 
     @Test func pasteInsertsTextAtCollapsedSelectionAndNotifiesOnce() {
-        let oldPasteboardItems = UIPasteboard.general.items
-        defer { UIPasteboard.general.items = oldPasteboardItems }
-
-        UIPasteboard.general.items = [
-            [UTType.plainText.identifier: " beta"]
-        ]
-
         let textView = TextView()
         let delegate = ChangeCountingDelegate()
         textView.delegate = delegate
+        textView.pasteboardTextProvider = { [" beta"] }
         textView.attributedText = NSAttributedString(string: "Alpha")
         textView.selectedRange = NSRange(location: 5, length: 0)
 
@@ -73,16 +66,10 @@ struct TextViewTests {
     }
 
     @Test func replaceAllWithPasteboardTextReplacesTextAndNotifiesOnce() {
-        let oldPasteboardItems = UIPasteboard.general.items
-        defer { UIPasteboard.general.items = oldPasteboardItems }
-
-        UIPasteboard.general.items = [
-            [UTType.plainText.identifier: "Replacement"]
-        ]
-
         let textView = TextView()
         let delegate = ChangeCountingDelegate()
         textView.delegate = delegate
+        textView.pasteboardTextProvider = { ["Replacement"] }
         textView.attributedText = NSAttributedString(string: "Original text")
         textView.selectedRange = NSRange(location: 8, length: 4)
 
@@ -110,7 +97,7 @@ struct StringExtensionTests {
 
 struct ThemeTests {
     @Test func builtInThemesHaveDisplayNames() {
-        let themeNames = Theme.allCases.map(\.name)
+        let themeNames = Theme.builtInThemes.map(\.name)
 
         #expect(themeNames == [
             "Office",
@@ -119,6 +106,27 @@ struct ThemeTests {
             "Blueprint",
             "Dark"
         ])
+    }
+
+    @Test func customThemeUsesStoredStyle() {
+        var customTheme = CustomTheme()
+        customTheme.interfaceStyle = .light
+        customTheme.backgroundColor = ThemeColor(red: 1, green: 1, blue: 1)
+        customTheme.tagStyles[NLTag.noun.rawValue] = CustomTagStyle(
+            color: ThemeColor(red: 0.1, green: 0.2, blue: 0.3),
+            isBold: true,
+            isItalic: true,
+            isUnderlined: true
+        )
+
+        let theme = Theme.custom(customTheme)
+
+        #expect(theme.name == "Custom")
+        #expect(theme.interfaceStyle == .light)
+        #expect(theme.isBold(for: .noun))
+        #expect(theme.isItalic(for: .noun))
+        #expect(theme.underlineStyle(for: .noun) == .single)
+        #expect(theme.foregroundColor(for: .noun) == UIColor(red: 0.1, green: 0.2, blue: 0.3, alpha: 1))
     }
 }
 

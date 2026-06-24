@@ -10,7 +10,10 @@ import UIKit
 
 class Settings: ObservableObject {
     init() {
-        if let name = UserDefaults.standard.string(forKey: Constants.themeKey), let value = Theme(rawValue: name) {
+        let customTheme = Self.loadCustomTheme()
+        if let identifier = UserDefaults.standard.string(forKey: Constants.themeKey), identifier == "custom" {
+            theme = .custom(customTheme)
+        } else if let identifier = UserDefaults.standard.string(forKey: Constants.themeKey), let value = Theme.builtInTheme(for: identifier) {
             theme = value
         } else {
             theme = .dark
@@ -31,7 +34,27 @@ class Settings: ObservableObject {
 
     @Published var theme: Theme {
         didSet {
-            UserDefaults.standard.set(theme.rawValue, forKey: Constants.themeKey)
+            UserDefaults.standard.set(theme.identifier, forKey: Constants.themeKey)
+            if case .custom(let customTheme) = theme {
+                Self.save(customTheme: customTheme)
+            }
         }
+    }
+
+    static func loadCustomTheme() -> CustomTheme {
+        guard let data = UserDefaults.standard.data(forKey: Constants.customThemeKey),
+              let customTheme = try? JSONDecoder().decode(CustomTheme.self, from: data) else {
+            return CustomTheme()
+        }
+
+        return customTheme
+    }
+
+    private static func save(customTheme: CustomTheme) {
+        guard let data = try? JSONEncoder().encode(customTheme) else {
+            return
+        }
+
+        UserDefaults.standard.set(data, forKey: Constants.customThemeKey)
     }
 }

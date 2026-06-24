@@ -13,6 +13,8 @@ enum Scope {
 }
 
 class TextView: UITextView {
+    var pasteboardTextProvider: (() -> [String])?
+
     override func cut(_ sender: Any?) {
         let scope = scope(sender)
         guard scope != .none else {
@@ -86,7 +88,7 @@ class TextView: UITextView {
 
     /// Scans the pasteboard for any available plain text format (UTF-8 data, plain text strings, or multi-item blocks)
     /// and flattens them into a clean array of strings.
-    var allPasteboardText: [String] {
+    static func defaultPasteboardText() -> [String] {
         var extractedStrings: [String] = []
         
         // Target Identifiers
@@ -134,7 +136,8 @@ class TextView: UITextView {
     }
 
     func pasteAttributedText(replacing scope: Scope = .selectedRange) {
-        let parsedAttributedStrings: [NSAttributedString] = allPasteboardText.map { NSAttributedString(string: $0, attributes: [.font: Theme.dark.font]) }
+        let pasteboardText = pasteboardTextProvider?() ?? Self.defaultPasteboardText()
+        let parsedAttributedStrings: [NSAttributedString] = pasteboardText.map { NSAttributedString(string: $0, attributes: [.font: Theme.dark.font]) }
         
         guard !parsedAttributedStrings.isEmpty else { return }
         

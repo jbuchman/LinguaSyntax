@@ -10,5 +10,6 @@ import UIKit
 enum Constants {
     static let minimizedIdentifier = UISheetPresentationController.Detent.Identifier("minimized")
     static let themeKey = "theme"
+    static let customThemeKey = "customTheme"
     static let textKey = "text"
 }

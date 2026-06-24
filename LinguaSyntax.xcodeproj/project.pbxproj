@@ -24,6 +24,8 @@
 		78FE2EB72FEA626C00D111A5 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 78FE2E9F2FEA626C00D111A5 /* README.md */; };
 		78FE2EB92FEA681000D111A5 /* Icon.icon in Resources */ = {isa = PBXBuildFile; fileRef = 78FE2EB82FEA681000D111A5 /* Icon.icon */; };
 		78FE2EBB2FEC925100D111A5 /* MoreMenuButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78FE2EBA2FEC925100D111A5 /* MoreMenuButton.swift */; };
+		78FE2ECA2FEC9DAD00D111A5 /* CustomThemeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78FE2EC92FEC9DAD00D111A5 /* CustomThemeViewController.swift */; };
+		78FE2ECC2FEC9E8100D111A5 /* MultiSelectSegmentedControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78FE2ECB2FEC9E8100D111A5 /* MultiSelectSegmentedControl.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,6 +59,8 @@
 		78FE2EB82FEA681000D111A5 /* Icon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = Icon.icon; sourceTree = "<group>"; };
 		78FE2EBA2FEC925100D111A5 /* MoreMenuButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreMenuButton.swift; sourceTree = "<group>"; };
 		78FE2EC02FEC9AF100D111A5 /* LinguaSyntaxTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LinguaSyntaxTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		78FE2EC92FEC9DAD00D111A5 /* CustomThemeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomThemeViewController.swift; sourceTree = "<group>"; };
+		78FE2ECB2FEC9E8100D111A5 /* MultiSelectSegmentedControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiSelectSegmentedControl.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -124,6 +128,8 @@
 				78FE2EA52FEA626C00D111A5 /* UIFont+extension.swift */,
 				78FE2EA62FEA626C00D111A5 /* ViewController.swift */,
 				78FE2EBA2FEC925100D111A5 /* MoreMenuButton.swift */,
+				78FE2EC92FEC9DAD00D111A5 /* CustomThemeViewController.swift */,
+				78FE2ECB2FEC9E8100D111A5 /* MultiSelectSegmentedControl.swift */,
 			);
 			path = LinguaSyntax;
 			sourceTree = "<group>";
@@ -241,11 +247,13 @@
 			files = (
 				78FE2EA82FEA626C00D111A5 /* SceneDelegate.swift in Sources */,
 				78FE2EA92FEA626C00D111A5 /* Theme.swift in Sources */,
+				78FE2ECC2FEC9E8100D111A5 /* MultiSelectSegmentedControl.swift in Sources */,
 				78FE2EAA2FEA626C00D111A5 /* ViewController.swift in Sources */,
 				78FE2EAB2FEA626C00D111A5 /* CounterViewController.swift in Sources */,
 				78FE2EAC2FEA626C00D111A5 /* TextView.swift in Sources */,
 				78FE2EAD2FEA626C00D111A5 /* NLTag+extension.swift in Sources */,
 				78FE2EAE2FEA626C00D111A5 /* Constants.swift in Sources */,
+				78FE2ECA2FEC9DAD00D111A5 /* CustomThemeViewController.swift in Sources */,
 				78FE2EAF2FEA626C00D111A5 /* Settings.swift in Sources */,
 				78FE2EB02FEA626C00D111A5 /* String+extension.swift in Sources */,
 				78FE2EB12FEA626C00D111A5 /* UIFont+extension.swift in Sources */,

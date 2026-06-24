@@ -68,15 +68,37 @@ class CounterViewController: UIViewController {
         settings.theme = theme
     }
 
+    private func editCustomTheme() {
+        let customTheme: CustomTheme
+        if case .custom(let currentCustomTheme) = settings.theme {
+            customTheme = currentCustomTheme
+        } else {
+            customTheme = Settings.loadCustomTheme()
+        }
+
+        let viewController = CustomThemeViewController(theme: customTheme) { [weak self] customTheme in
+            self?.settings.theme = .custom(customTheme)
+        }
+        let navigationController = UINavigationController(rootViewController: viewController)
+        navigationController.modalPresentationStyle = .formSheet
+        present(navigationController, animated: true)
+    }
+
     private func generateMenu(theme currentTheme: Theme) {
-        let themes: [UIAction] = Theme.allCases.map { theme in
+        let themes: [UIAction] = Theme.builtInThemes.map { theme in
             UIAction(title: theme.name, state: theme == currentTheme ? .on : .off) { [weak self] _ in
                 self?.select(theme: theme)
             }
         }
+        let customThemeAction = UIAction(title: "Custom", state: currentTheme.isCustom ? .on : .off) { [weak self] _ in
+            self?.select(theme: .custom(Settings.loadCustomTheme()))
+        }
+        let editCustomThemeAction = UIAction(title: "Edit Custom Theme", image: UIImage(systemName: "paintpalette")) { [weak self] _ in
+            self?.editCustomTheme()
+        }
 
         moreButton.menu = UIMenu(children: [
-            UIMenu(title: "Theme", children: themes),
+            UIMenu(title: "Theme", children: themes + [customThemeAction, editCustomThemeAction]),
             UIMenu(options: [.displayInline], children: [
                 UIAction(title: "Cut All", image: UIImage(systemName: "scissors")) { [weak self] _ in
                     self?.sourceTextView?.cutAll()

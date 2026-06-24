@@ -69,13 +69,28 @@ class CounterViewController: UIViewController {
     }
 
     private func editCustomTheme() {
-        let customTheme: CustomTheme
         if case .custom(let currentCustomTheme) = settings.theme {
-            customTheme = currentCustomTheme
+            presentCustomThemeEditor(theme: currentCustomTheme)
         } else {
-            customTheme = Settings.loadCustomTheme()
+            confirmCustomThemeOverride(basedOn: settings.theme)
         }
+    }
 
+    private func confirmCustomThemeOverride(basedOn theme: Theme) {
+        let alertController = UIAlertController(
+            title: "Override Custom Theme?",
+            message: "Use \(theme.name) as the starting point for a new custom theme.",
+            preferredStyle: .alert
+        )
+        alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        alertController.addAction(UIAlertAction(title: "Use \(theme.name)", style: .default) { [weak self] _ in
+            self?.presentCustomThemeEditor(theme: CustomTheme(basedOn: theme))
+        })
+
+        present(alertController, animated: true)
+    }
+
+    private func presentCustomThemeEditor(theme customTheme: CustomTheme) {
         let viewController = CustomThemeViewController(theme: customTheme) { [weak self] customTheme in
             self?.settings.theme = .custom(customTheme)
         }

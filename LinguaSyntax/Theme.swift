@@ -211,6 +211,31 @@ public struct CustomTheme: Codable, Equatable {
         self.tagStyles = tagStyles
     }
 
+    public init(basedOn theme: Theme) {
+        if case .custom(let customTheme) = theme {
+            self = customTheme
+            return
+        }
+
+        let interfaceStyle: InterfaceStyle = theme.interfaceStyle == .dark ? .dark : .light
+        let defaultStyle = CustomTagStyle.default(interfaceStyle: interfaceStyle)
+        let tagStyles = Self.editableTags.reduce(into: [String: CustomTagStyle]()) { result, tag in
+            result[tag.rawValue] = CustomTagStyle(
+                color: ThemeColor(color: theme.foregroundColor(for: tag) ?? defaultStyle.color.uiColor),
+                isBold: theme.isBold(for: tag),
+                isItalic: theme.isItalic(for: tag),
+                isUnderlined: theme.underlineStyle(for: tag) != nil
+            )
+        }
+
+        self.init(
+            name: "Custom",
+            interfaceStyle: interfaceStyle,
+            backgroundColor: ThemeColor(color: theme.backgroundColor),
+            tagStyles: tagStyles
+        )
+    }
+
     public static let editableTags: [NLTag] = [
         .noun,
         .verb,

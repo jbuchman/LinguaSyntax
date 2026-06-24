@@ -128,6 +128,16 @@ struct ThemeTests {
         #expect(theme.underlineStyle(for: .noun) == .single)
         #expect(theme.foregroundColor(for: .noun) == UIColor(red: 0.1, green: 0.2, blue: 0.3, alpha: 1))
     }
+
+    @Test func customThemeCanUseBuiltInThemeAsBasis() {
+        let customTheme = CustomTheme(basedOn: Theme.blueprint)
+        let theme = Theme.custom(customTheme)
+
+        #expect(theme.interfaceStyle == Theme.blueprint.interfaceStyle)
+        #expect(theme.backgroundColor == Theme.blueprint.backgroundColor)
+        #expect(theme.foregroundColor(for: .verb) == Theme.blueprint.foregroundColor(for: .verb))
+        #expect(theme.foregroundColor(for: .noun) == Theme.blueprint.foregroundColor(for: .noun))
+    }
 }
 
 private final class ChangeCountingDelegate: NSObject, UITextViewDelegate {

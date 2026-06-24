@@ -4,7 +4,6 @@
 3. Shortcuts Integration
 4. Text size +/-
 5. Actions/Extensions
-6. custom theme
 
 # App Store Description
 

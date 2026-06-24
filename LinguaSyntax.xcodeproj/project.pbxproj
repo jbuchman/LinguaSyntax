@@ -26,6 +26,9 @@
 		78FE2EBB2FEC925100D111A5 /* MoreMenuButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78FE2EBA2FEC925100D111A5 /* MoreMenuButton.swift */; };
 		78FE2ECA2FEC9DAD00D111A5 /* CustomThemeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78FE2EC92FEC9DAD00D111A5 /* CustomThemeViewController.swift */; };
 		78FE2ECC2FEC9E8100D111A5 /* MultiSelectSegmentedControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78FE2ECB2FEC9E8100D111A5 /* MultiSelectSegmentedControl.swift */; };
+		78FE2EDB2FECA0D500D111A5 /* LinguaSyntaxShareExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 78FE2ED12FECA0D400D111A5 /* LinguaSyntaxShareExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		78FE2EE22FECA22800D111A5 /* TextImporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78FE2EE12FECA22800D111A5 /* TextImporter.swift */; };
+		78FE2EE42FECA24900D111A5 /* LinguaSyntaxShortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78FE2EE32FECA24900D111A5 /* LinguaSyntaxShortcuts.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -36,7 +39,28 @@
 			remoteGlobalIDString = 78262C5B2FE6C8330099A294;
 			remoteInfo = LinguaSyntax;
 		};
+		78FE2ED92FECA0D500D111A5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 78262C542FE6C8330099A294 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 78FE2ED02FECA0D400D111A5;
+			remoteInfo = LinguaSyntaxShareExtension;
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		78FE2EE02FECA0D500D111A5 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				78FE2EDB2FECA0D500D111A5 /* LinguaSyntaxShareExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		78262C5C2FE6C8330099A294 /* LinguaSyntax.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LinguaSyntax.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -61,12 +85,33 @@
 		78FE2EC02FEC9AF100D111A5 /* LinguaSyntaxTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LinguaSyntaxTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		78FE2EC92FEC9DAD00D111A5 /* CustomThemeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomThemeViewController.swift; sourceTree = "<group>"; };
 		78FE2ECB2FEC9E8100D111A5 /* MultiSelectSegmentedControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiSelectSegmentedControl.swift; sourceTree = "<group>"; };
+		78FE2ED12FECA0D400D111A5 /* LinguaSyntaxShareExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = LinguaSyntaxShareExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		78FE2EE12FECA22800D111A5 /* TextImporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextImporter.swift; sourceTree = "<group>"; };
+		78FE2EE32FECA24900D111A5 /* LinguaSyntaxShortcuts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinguaSyntaxShortcuts.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		78FE2EDC2FECA0D500D111A5 /* Exceptions for "LinguaSyntaxShareExtension" folder in "LinguaSyntaxShareExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 78FE2ED02FECA0D400D111A5 /* LinguaSyntaxShareExtension */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		78FE2EC12FEC9AF100D111A5 /* LinguaSyntaxTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = LinguaSyntaxTests;
+			sourceTree = "<group>";
+		};
+		78FE2ED22FECA0D500D111A5 /* LinguaSyntaxShareExtension */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				78FE2EDC2FECA0D500D111A5 /* Exceptions for "LinguaSyntaxShareExtension" folder in "LinguaSyntaxShareExtension" target */,
+			);
+			path = LinguaSyntaxShareExtension;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -86,6 +131,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		78FE2ECE2FECA0D400D111A5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -94,6 +146,7 @@
 			children = (
 				78FE2EA72FEA626C00D111A5 /* LinguaSyntax */,
 				78FE2EC12FEC9AF100D111A5 /* LinguaSyntaxTests */,
+				78FE2ED22FECA0D500D111A5 /* LinguaSyntaxShareExtension */,
 				78262C5D2FE6C8330099A294 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -103,6 +156,7 @@
 			children = (
 				78262C5C2FE6C8330099A294 /* LinguaSyntax.app */,
 				78FE2EC02FEC9AF100D111A5 /* LinguaSyntaxTests.xctest */,
+				78FE2ED12FECA0D400D111A5 /* LinguaSyntaxShareExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -130,6 +184,8 @@
 				78FE2EBA2FEC925100D111A5 /* MoreMenuButton.swift */,
 				78FE2EC92FEC9DAD00D111A5 /* CustomThemeViewController.swift */,
 				78FE2ECB2FEC9E8100D111A5 /* MultiSelectSegmentedControl.swift */,
+				78FE2EE12FECA22800D111A5 /* TextImporter.swift */,
+				78FE2EE32FECA24900D111A5 /* LinguaSyntaxShortcuts.swift */,
 			);
 			path = LinguaSyntax;
 			sourceTree = "<group>";
@@ -144,10 +200,12 @@
 				78262C582FE6C8330099A294 /* Sources */,
 				78262C592FE6C8330099A294 /* Frameworks */,
 				78262C5A2FE6C8330099A294 /* Resources */,
+				78FE2EE02FECA0D500D111A5 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				78FE2EDA2FECA0D500D111A5 /* PBXTargetDependency */,
 			);
 			name = LinguaSyntax;
 			packageProductDependencies = (
@@ -179,6 +237,28 @@
 			productReference = 78FE2EC02FEC9AF100D111A5 /* LinguaSyntaxTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		78FE2ED02FECA0D400D111A5 /* LinguaSyntaxShareExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 78FE2EDD2FECA0D500D111A5 /* Build configuration list for PBXNativeTarget "LinguaSyntaxShareExtension" */;
+			buildPhases = (
+				78FE2ECD2FECA0D400D111A5 /* Sources */,
+				78FE2ECE2FECA0D400D111A5 /* Frameworks */,
+				78FE2ECF2FECA0D400D111A5 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				78FE2ED22FECA0D500D111A5 /* LinguaSyntaxShareExtension */,
+			);
+			name = LinguaSyntaxShareExtension;
+			packageProductDependencies = (
+			);
+			productName = LinguaSyntaxShareExtension;
+			productReference = 78FE2ED12FECA0D400D111A5 /* LinguaSyntaxShareExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -195,6 +275,9 @@
 					78FE2EBF2FEC9AF100D111A5 = {
 						CreatedOnToolsVersion = 26.5;
 						TestTargetID = 78262C5B2FE6C8330099A294;
+					};
+					78FE2ED02FECA0D400D111A5 = {
+						CreatedOnToolsVersion = 26.5;
 					};
 				};
 			};
@@ -214,6 +297,7 @@
 			targets = (
 				78262C5B2FE6C8330099A294 /* LinguaSyntax */,
 				78FE2EBF2FEC9AF100D111A5 /* LinguaSyntaxTests */,
+				78FE2ED02FECA0D400D111A5 /* LinguaSyntaxShareExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -238,6 +322,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		78FE2ECF2FECA0D400D111A5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -252,10 +343,12 @@
 				78FE2EAB2FEA626C00D111A5 /* CounterViewController.swift in Sources */,
 				78FE2EAC2FEA626C00D111A5 /* TextView.swift in Sources */,
 				78FE2EAD2FEA626C00D111A5 /* NLTag+extension.swift in Sources */,
+				78FE2EE22FECA22800D111A5 /* TextImporter.swift in Sources */,
 				78FE2EAE2FEA626C00D111A5 /* Constants.swift in Sources */,
 				78FE2ECA2FEC9DAD00D111A5 /* CustomThemeViewController.swift in Sources */,
 				78FE2EAF2FEA626C00D111A5 /* Settings.swift in Sources */,
 				78FE2EB02FEA626C00D111A5 /* String+extension.swift in Sources */,
+				78FE2EE42FECA24900D111A5 /* LinguaSyntaxShortcuts.swift in Sources */,
 				78FE2EB12FEA626C00D111A5 /* UIFont+extension.swift in Sources */,
 				78FE2EB22FEA626C00D111A5 /* AppDelegate.swift in Sources */,
 				78FE2EBB2FEC925100D111A5 /* MoreMenuButton.swift in Sources */,
@@ -269,6 +362,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		78FE2ECD2FECA0D400D111A5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -276,6 +376,11 @@
 			isa = PBXTargetDependency;
 			target = 78262C5B2FE6C8330099A294 /* LinguaSyntax */;
 			targetProxy = 78FE2EC42FEC9AF100D111A5 /* PBXContainerItemProxy */;
+		};
+		78FE2EDA2FECA0D500D111A5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 78FE2ED02FECA0D400D111A5 /* LinguaSyntaxShareExtension */;
+			targetProxy = 78FE2ED92FECA0D500D111A5 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -528,6 +633,62 @@
 			};
 			name = Release;
 		};
+		78FE2EDE2FECA0D500D111A5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = QEC32PEYLH;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = LinguaSyntaxShareExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = LinguaSyntaxShareExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = mobi.buchman.LinguaSyntax.LinguaSyntaxShareExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		78FE2EDF2FECA0D500D111A5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = QEC32PEYLH;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = LinguaSyntaxShareExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = LinguaSyntaxShareExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = mobi.buchman.LinguaSyntax.LinguaSyntaxShareExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -554,6 +715,15 @@
 			buildConfigurations = (
 				78FE2EC72FEC9AF100D111A5 /* Debug */,
 				78FE2EC82FEC9AF100D111A5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		78FE2EDD2FECA0D500D111A5 /* Build configuration list for PBXNativeTarget "LinguaSyntaxShareExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				78FE2EDE2FECA0D500D111A5 /* Debug */,
+				78FE2EDF2FECA0D500D111A5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

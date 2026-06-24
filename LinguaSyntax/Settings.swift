@@ -9,6 +9,8 @@ import Combine
 import UIKit
 
 class Settings: ObservableObject {
+    private var importObserver: NSObjectProtocol?
+
     init() {
         let customTheme = Self.loadCustomTheme()
         if let identifier = UserDefaults.standard.string(forKey: Constants.themeKey), identifier == "custom" {
@@ -23,6 +25,24 @@ class Settings: ObservableObject {
             text = string
         } else {
             text = ""
+        }
+
+        importObserver = NotificationCenter.default.addObserver(
+            forName: TextImporter.didImportTextNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] notification in
+            guard let text = notification.userInfo?[TextImporter.importedTextUserInfoKey] as? String else {
+                return
+            }
+
+            self?.text = text
+        }
+    }
+
+    deinit {
+        if let importObserver {
+            NotificationCenter.default.removeObserver(importObserver)
         }
     }
 

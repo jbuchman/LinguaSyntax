@@ -140,6 +140,27 @@ struct ThemeTests {
     }
 }
 
+struct ShareImportTests {
+    @Test func importURLExtractsSharedText() throws {
+        var components = URLComponents()
+        components.scheme = Constants.importURLScheme
+        components.host = Constants.importURLHost
+        components.queryItems = [
+            URLQueryItem(name: Constants.importTextQueryItem, value: "Imported text")
+        ]
+
+        let url = try #require(components.url)
+
+        #expect(SceneDelegate.importedText(from: url) == "Imported text")
+    }
+
+    @Test func importURLRejectsUnknownScheme() throws {
+        let url = try #require(URL(string: "https://example.com?text=Imported"))
+
+        #expect(SceneDelegate.importedText(from: url) == nil)
+    }
+}
+
 private final class ChangeCountingDelegate: NSObject, UITextViewDelegate {
     var changeCount = 0
 

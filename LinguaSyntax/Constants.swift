@@ -12,4 +12,7 @@ enum Constants {
     static let themeKey = "theme"
     static let customThemeKey = "customTheme"
     static let textKey = "text"
+    static let importURLScheme = "linguasyntax"
+    static let importURLHost = "import"
+    static let importTextQueryItem = "text"
 }

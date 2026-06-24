@@ -14,42 +14,15 @@ class ViewController: UIViewController {
         textView.textContainerInset = .zero
         textView.textContainer.lineFragmentPadding = 0
     }}
-    @IBOutlet weak var moreButton: UIBarButtonItem!
     @IBOutlet weak var placeholderLabel: UILabel!
     let settings = Settings()
     var cancellables: Set<AnyCancellable> = []
 
     lazy var counterViewController: CounterViewController? = {
         storyboard?.instantiateViewController(identifier: "counter") { coder in
-            CounterViewController(coder: coder, settings: self.settings)
+            CounterViewController(coder: coder, settings: self.settings, sourceTextView: self.textView)
         }
     }()
-
-    private func select(theme: Theme) {
-        settings.theme = theme
-    }
-    
-    private func generateMenu(theme currentTheme: Theme) {
-        let themes: [UIAction] = Theme.allCases.map { theme in
-            UIAction(title: theme.name, state: theme == currentTheme ? .on : .off, handler: { _ in self.select(theme: theme)
-            })
-        }
-        
-        moreButton.menu = UIMenu(children: [
-            UIMenu(title: "Theme", children: themes),
-            UIMenu(options: [.displayInline], children: [
-                UIAction(title: "Cut", image: UIImage(systemName: "scissors"), handler: textView.cut(_:)),
-                UIAction(title: "Copy", image: UIImage(systemName: "doc.on.doc"), handler: textView.copy(_:)),
-                UIAction(title: "Paste", image: UIImage(systemName: "document.on.clipboard"), handler: textView.paste(_:)),
-            ]),
-            UIMenu(options: .displayInline, children: [
-                UIAction(title: "Select All", image: UIImage(systemName: "selection.pin.in.out"), handler: textView.selectAll(_:)),
-            ]),
-            UIMenu(options: .displayInline, children: [
-                UIAction(title: "Delete", image: UIImage(systemName: "trash"), attributes: .destructive, handler: textView.delete(_:)),
-            ])
-        ])
-    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -61,15 +34,14 @@ class ViewController: UIViewController {
         }).store(in: &cancellables)
         
         settings.$theme.receive(on: DispatchQueue.main).sink(receiveValue: { theme in
-            self.generateMenu(theme: theme)
             self.updateSyntaxHighlight(theme: theme)
         }).store(in: &cancellables)
     }
         
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
         
-        guard let counterViewController = counterViewController, counterViewController.presentingViewController == nil else { return }
+        guard let counterViewController = counterViewController, presentedViewController == nil else { return }
         
         // 1. Configure the View Controller layout parameters PRIOR to presentation
         counterViewController.modalPresentationStyle = .pageSheet

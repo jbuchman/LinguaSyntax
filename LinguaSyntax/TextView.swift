@@ -9,15 +9,20 @@ import UIKit
 import UniformTypeIdentifiers
 
 enum Scope {
-    case all, selection
+    case all, selectedRange, selectedText, none
 }
 
 class TextView: UITextView {
     override func cut(_ sender: Any?) {
         let scope = scope(sender)
+        guard scope != .none else {
+            return
+        }
+
         copyAttributedText(for: scope)
-        deleteText(for: scope)
-        delegate?.textViewDidChange?(self)
+        if deleteText(for: scope) {
+            delegate?.textViewDidChange?(self)
+        }
     }
     
     override func copy(_ sender: Any?) {
@@ -31,7 +36,10 @@ class TextView: UITextView {
         
     override func delete(_ sender: Any?) {
         let scope = scope(sender)
-        deleteText(for: scope)
+        guard deleteText(for: scope) else {
+            return
+        }
+
         delegate?.textViewDidChange?(self)
     }
     
@@ -44,21 +52,22 @@ class TextView: UITextView {
     
     func scope(_ sender: Any?) -> Scope {
         if #available(iOS 26.0, *) {
-            if selectedRanges.isEmpty {
-                return .all
+            if selectedRanges.contains(where: { $0.length > 0 }) {
+                return .selectedText
             }
         } else {
-            if selectedRange.length == 0 {
-                return .all
+            if selectedRange.length > 0 {
+                return .selectedText
             }
         }
-        return .selection
+        return .none
     }
 
     func cutAll() {
         copyAttributedText(for: .all)
-        deleteText(for: .all)
-        delegate?.textViewDidChange?(self)
+        if deleteText(for: .all) {
+            delegate?.textViewDidChange?(self)
+        }
     }
 
     func copyAll() {
@@ -70,8 +79,9 @@ class TextView: UITextView {
     }
 
     func deleteAll() {
-        deleteText(for: .all)
-        delegate?.textViewDidChange?(self)
+        if deleteText(for: .all) {
+            delegate?.textViewDidChange?(self)
+        }
     }
 
     /// Scans the pasteboard for any available plain text format (UTF-8 data, plain text strings, or multi-item blocks)
@@ -123,7 +133,7 @@ class TextView: UITextView {
         return extractedStrings.filter { !$0.isEmpty }
     }
 
-    func pasteAttributedText(replacing scope: Scope = .selection) {
+    func pasteAttributedText(replacing scope: Scope = .selectedRange) {
         let parsedAttributedStrings: [NSAttributedString] = allPasteboardText.map { NSAttributedString(string: $0, attributes: [.font: Theme.dark.font]) }
         
         guard !parsedAttributedStrings.isEmpty else { return }
@@ -144,14 +154,14 @@ class TextView: UITextView {
         case .all:
             replacementRange = NSRange(location: 0, length: attributedText.length)
 
-        case .selection:
+        case .selectedRange, .selectedText:
             replacementRange = selectedRange
+
+        case .none:
+            return
         }
 
-        let currentMutable = NSMutableAttributedString(attributedString: attributedText)
-        
-        currentMutable.replaceCharacters(in: replacementRange, with: finalAttributedCombination)
-        attributedText = currentMutable
+        textStorage.replaceCharacters(in: replacementRange, with: finalAttributedCombination)
         
         // Re-collapse cursor anchor target cleanly right after inserted payload length
         let targetEndLocation = replacementRange.location + finalAttributedCombination.length
@@ -159,31 +169,40 @@ class TextView: UITextView {
         delegate?.textViewDidChange?(self)
     }
     
-    func deleteText(for scope: Scope) {
+    @discardableResult
+    func deleteText(for scope: Scope) -> Bool {
         switch scope {
         case .all:
-            attributedText = NSAttributedString()
+            guard attributedText.length > 0 else {
+                return false
+            }
+            textStorage.replaceCharacters(in: NSRange(location: 0, length: textStorage.length), with: "")
+            return true
             
-        case .selection:
+        case .selectedText:
             if #available(iOS 26.0, *) {
                 // CRITICAL: Deleting from the bottom up protects index locations from shifting
                 let sortedRanges = selectedRanges.sorted { $0.location > $1.location }
                 
-                let currentMutable = NSMutableAttributedString(attributedString: attributedText)
+                var didDelete = false
                 for range in sortedRanges {
                     guard range.length > 0 else { continue }
-                    currentMutable.replaceCharacters(in: range, with: "")
+                    textStorage.replaceCharacters(in: range, with: "")
+                    didDelete = true
                 }
-                attributedText = currentMutable
+                return didDelete
             } else {
                 // Fallback for iOS 18
                 let currentSelectedNSRange = selectedRange
                 if currentSelectedNSRange.length > 0 {
-                    let currentMutable = NSMutableAttributedString(attributedString: attributedText)
-                    currentMutable.replaceCharacters(in: currentSelectedNSRange, with: "")
-                    attributedText = currentMutable
+                    textStorage.replaceCharacters(in: currentSelectedNSRange, with: "")
+                    return true
                 }
+                return false
             }
+
+        case .selectedRange, .none:
+            return false
         }
     }
         
@@ -199,7 +218,7 @@ class TextView: UITextView {
                 pasteboardItems.append([rtfKey: rtfData, plainKey: attributedText.string])
             }
             
-        case .selection:
+        case .selectedText:
             if #available(iOS 26.0, *) {
                 // Collect separate rich text item slices for non-contiguous highlights
                 for nsRange in selectedRanges {
@@ -220,6 +239,9 @@ class TextView: UITextView {
                     }
                 }
             }
+
+        case .selectedRange, .none:
+            return
         }
         
         if !pasteboardItems.isEmpty {

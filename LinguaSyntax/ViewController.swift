@@ -30,7 +30,11 @@ class ViewController: UIViewController {
         
         navigationController?.navigationBar.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(resetFocus)))
         
-        settings.$text.receive(on: DispatchQueue.main).sink(receiveValue: { text in
+        settings.$text.receive(on: DispatchQueue.main).sink(receiveValue: { [weak self] text in
+            guard let self else {
+                return
+            }
+
             guard self.textView.text != text else {
                 return
             }
@@ -39,7 +43,11 @@ class ViewController: UIViewController {
             self.updateSyntaxHighlight()
         }).store(in: &cancellables)
         
-        settings.$theme.receive(on: DispatchQueue.main).sink(receiveValue: { theme in
+        settings.$theme.receive(on: DispatchQueue.main).sink(receiveValue: { [weak self] theme in
+            guard let self else {
+                return
+            }
+
             self.updateSyntaxHighlight(theme: theme)
         }).store(in: &cancellables)
     }
@@ -115,7 +123,7 @@ class ViewController: UIViewController {
 
         let tagger = NLTagger(tagSchemes: [.nameTypeOrLexicalClass])
         tagger.string = string
-        tagger.enumerateTags(in: string.startIndex..<string.endIndex, unit: .word, scheme: .nameTypeOrLexicalClass, options: [.joinNames]) { tag, tokenRange in
+        tagger.enumerateTags(in: string.startIndex..<string.endIndex, unit: .word, scheme: .nameTypeOrLexicalClass, options: String.syntaxTaggerOptions) { tag, tokenRange in
             guard let tag else {
                 return true
             }

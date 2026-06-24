@@ -23,13 +23,21 @@ class CounterViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        settings.$theme.receive(on: DispatchQueue.main).sink(receiveValue: { theme in
+        settings.$theme.receive(on: DispatchQueue.main).sink(receiveValue: { [weak self] theme in
+            guard let self else {
+                return
+            }
+
             self.generateMenu(theme: theme)
             self.updateAppearance(theme: theme)
             self.contentUpdate(theme: theme)
         }).store(in: &cancellables)
 
-        settings.$text.receive(on: DispatchQueue.main).sink(receiveValue: { text in
+        settings.$text.receive(on: DispatchQueue.main).sink(receiveValue: { [weak self] text in
+            guard let self else {
+                return
+            }
+
             self.contentUpdate(text: text)
         }).store(in: &cancellables)
     }

@@ -9,8 +9,15 @@ import UIKit
 import NaturalLanguage
 
 extension String {
+    static let syntaxTaggerOptions: NLTagger.Options = [
+        .joinNames,
+        .omitWhitespace,
+        .omitPunctuation,
+        .omitOther
+    ]
+
     /// Apply syntax highlighting to the attributed string.
-    func highlightSyntax(theme: Theme, options: NLTagger.Options = [.joinNames]) -> AttributedString {
+    func highlightSyntax(theme: Theme, options: NLTagger.Options = Self.syntaxTaggerOptions) -> AttributedString {
         guard !self.isEmpty else {
             return AttributedString(self)
         }
@@ -51,9 +58,8 @@ extension String {
         
         let tagger = NLTagger(tagSchemes: [.nameTypeOrLexicalClass])
         tagger.string = self
-        let options: NLTagger.Options = [.joinNames]
         var tags = [NLTag: Int]()
-        tagger.enumerateTags(in: self.startIndex..<self.endIndex, unit: .word, scheme: .nameTypeOrLexicalClass, options: options) { tag, tokenRange in
+        tagger.enumerateTags(in: self.startIndex..<self.endIndex, unit: .word, scheme: .nameTypeOrLexicalClass, options: Self.syntaxTaggerOptions) { tag, tokenRange in
             guard let tag else {
                 return true
             }

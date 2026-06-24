@@ -30,7 +30,12 @@ class ViewController: UIViewController {
         navigationController?.navigationBar.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(resetFocus)))
         
         settings.$text.receive(on: DispatchQueue.main).sink(receiveValue: { text in
+            guard self.textView.text != text else {
+                return
+            }
+
             self.textView.text = text
+            self.updateSyntaxHighlight()
         }).store(in: &cancellables)
         
         settings.$theme.receive(on: DispatchQueue.main).sink(receiveValue: { theme in
@@ -80,7 +85,9 @@ class ViewController: UIViewController {
             ])
             placeholderLabel.isHidden = false
         } else {
+            let selectedRange = textView.selectedRange
             textView.attributedText = NSAttributedString(textView.text.highlightSyntax(theme: theme))
+            textView.selectedRange = selectedRange
             placeholderLabel.isHidden = true
         }
         view.backgroundColor = theme.backgroundColor

@@ -93,6 +93,40 @@ struct StringExtensionTests {
         #expect(!summaryText.contains(NLTag.whitespace.rawValue))
         #expect(!summaryText.contains(NLTag.other.rawValue))
     }
+
+    @Test(arguments: [
+        ("Spanish", "Hola mundo. Adiós mundo.", 4),
+        ("French", "Bonjour le monde. Merci beaucoup.", 5),
+        ("Japanese", "今日は世界です。明日も書きます。", 8),
+        ("Arabic", "مرحبا بالعالم. شكرا جزيلا.", 4)
+    ])
+    func wordCountHandlesMultipleLanguages(_ language: String, text: String, expectedWordCount: Int) {
+        #expect(text.wordCount == expectedWordCount, "\(language) word count changed")
+    }
+
+    @Test(arguments: [
+        "Hola mundo. Adiós mundo.",
+        "Bonjour le monde. Merci beaucoup.",
+        "今日は世界です。明日も書きます。",
+        "مرحبا بالعالم. شكرا جزيلا."
+    ])
+    func syntaxHighlightingPreservesMultilingualText(_ text: String) {
+        #expect(String(text.highlightSyntax(theme: .dark).characters) == text)
+    }
+
+    @Test(arguments: [
+        "Hola mundo. Adiós mundo.",
+        "Bonjour le monde. Merci beaucoup.",
+        "今日は世界です。明日も書きます。",
+        "مرحبا بالعالم. شكرا جزيلا."
+    ])
+    func partsOfSpeechOmitsNonLexicalTagsForMultipleLanguages(_ text: String) {
+        let summaryText = text.partsOfSpeech(theme: .dark).characters
+
+        #expect(!summaryText.contains(NLTag.punctuation.rawValue))
+        #expect(!summaryText.contains(NLTag.whitespace.rawValue))
+        #expect(!summaryText.contains(NLTag.other.rawValue))
+    }
 }
 
 struct ThemeTests {

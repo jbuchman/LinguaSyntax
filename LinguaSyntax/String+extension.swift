@@ -26,14 +26,25 @@ extension String {
         tagger.string = self
         
         var attributedString = AttributedString()
+        var currentIndex = startIndex
         tagger.enumerateTags(in: self.startIndex..<self.endIndex, unit: .word, scheme: .nameTypeOrLexicalClass, options: options) { tag, tokenRange in
+            if currentIndex < tokenRange.lowerBound {
+                attributedString.append(AttributedString(self[currentIndex..<tokenRange.lowerBound]))
+            }
+
             let substring = self[tokenRange]
             if let attributedSubstring = tag?.attributedString(substring: substring, theme: theme) {
                 attributedString.append(attributedSubstring)
             } else {
                 attributedString.append(AttributedString(substring))
             }
+
+            currentIndex = tokenRange.upperBound
             return true
+        }
+
+        if currentIndex < endIndex {
+            attributedString.append(AttributedString(self[currentIndex..<endIndex]))
         }
         
         attributedString.backgroundColor = theme.backgroundColor
@@ -60,7 +71,7 @@ extension String {
         tagger.string = self
         var tags = [NLTag: Int]()
         tagger.enumerateTags(in: self.startIndex..<self.endIndex, unit: .word, scheme: .nameTypeOrLexicalClass, options: Self.syntaxTaggerOptions) { tag, tokenRange in
-            guard let tag else {
+            guard let tag, tag != .other else {
                 return true
             }
             tags[tag, default: 0] += 1

@@ -10,7 +10,7 @@ import SwiftUI
 import NaturalLanguage
 
 public enum Theme: String, CaseIterable {
-    case office, scholastic, dark
+    case office, scholastic, editorial, blueprint, dark
     
     func secondaryBackground(traitCollection: UITraitCollection) -> UIColor {
         let baseTraits = traitCollection.modifyingTraits { mutableTraits in
@@ -27,19 +27,23 @@ public enum Theme: String, CaseIterable {
         {
         case .office: return "Office"
         case .scholastic: return "Scholastic"
+        case .editorial: return "Editorial"
+        case .blueprint: return "Blueprint"
         case .dark: return "Dark"
         }
     }
     
     public var interfaceStyle: UIUserInterfaceStyle {
         switch self {
-        case .dark: .dark
+        case .blueprint, .dark: .dark
         default: .light
         }
     }
     
     public var backgroundColor: UIColor {
         switch self {
+        case .editorial: return UIColor(red: 0.98, green: 0.97, blue: 0.93, alpha: 1)
+        case .blueprint: return UIColor(red: 0.02, green: 0.08, blue: 0.14, alpha: 1)
         case .dark: return UIColor(white: 0.2, alpha: 1)
         default: return .white
         }
@@ -83,6 +87,36 @@ public enum Theme: String, CaseIterable {
         case (.office, .noun):             return #colorLiteral(red: 0.662745098, green: 0.1411764706, blue: 0.6549019608, alpha: 1)
         case (.office, .verb):             return #colorLiteral(red: 0.5529411765, green: 0.05490196078, blue: 0.07450980392, alpha: 1)   
         case (.office, .adjective):        return #colorLiteral(red: 0.1058823529, green: 0.5176470588, blue: 0.2274509804, alpha: 1)
+
+            // Editorial
+        case (.editorial, .placeName):        return UIColor(red: 0.00, green: 0.42, blue: 0.68, alpha: 1)
+        case (.editorial, .organizationName): return UIColor(red: 0.00, green: 0.42, blue: 0.68, alpha: 1)
+        case (.editorial, .personalName):     return UIColor(red: 0.00, green: 0.42, blue: 0.68, alpha: 1)
+        case (.editorial, .noun):             return UIColor(red: 0.04, green: 0.21, blue: 0.44, alpha: 1)
+        case (.editorial, .pronoun):          return UIColor(red: 0.35, green: 0.20, blue: 0.55, alpha: 1)
+        case (.editorial, .verb):             return UIColor(red: 0.88, green: 0.11, blue: 0.12, alpha: 1)
+        case (.editorial, .adverb):           return UIColor(red: 0.72, green: 0.18, blue: 0.52, alpha: 1)
+        case (.editorial, .adjective):        return UIColor(red: 0.00, green: 0.50, blue: 0.18, alpha: 1)
+        case (.editorial, .preposition):      return UIColor(red: 0.86, green: 0.47, blue: 0.00, alpha: 1)
+        case (.editorial, .determiner):       return UIColor(red: 0.25, green: 0.35, blue: 0.40, alpha: 1)
+        case (.editorial, .conjunction):      return UIColor(red: 0.55, green: 0.28, blue: 0.10, alpha: 1)
+        case (.editorial, .number):           return UIColor(red: 0.65, green: 0.48, blue: 0.00, alpha: 1)
+
+            // Blueprint
+        case (.blueprint, .placeName):        return UIColor(red: 0.48, green: 0.93, blue: 1.00, alpha: 1)
+        case (.blueprint, .organizationName): return UIColor(red: 0.48, green: 0.93, blue: 1.00, alpha: 1)
+        case (.blueprint, .personalName):     return UIColor(red: 0.48, green: 0.93, blue: 1.00, alpha: 1)
+        case (.blueprint, .noun):             return UIColor(red: 0.83, green: 0.95, blue: 1.00, alpha: 1)
+        case (.blueprint, .pronoun):          return UIColor(red: 0.70, green: 0.78, blue: 1.00, alpha: 1)
+        case (.blueprint, .particle):         return UIColor(red: 0.43, green: 0.78, blue: 0.86, alpha: 1)
+        case (.blueprint, .verb):             return UIColor(red: 1.00, green: 0.82, blue: 0.33, alpha: 1)
+        case (.blueprint, .adverb):           return UIColor(red: 1.00, green: 0.58, blue: 0.77, alpha: 1)
+        case (.blueprint, .adjective):        return UIColor(red: 0.48, green: 1.00, blue: 0.75, alpha: 1)
+        case (.blueprint, .interjection):     return UIColor(red: 1.00, green: 0.67, blue: 0.42, alpha: 1)
+        case (.blueprint, .preposition):      return UIColor(red: 0.92, green: 0.90, blue: 0.70, alpha: 1)
+        case (.blueprint, .determiner):       return UIColor(red: 0.62, green: 0.78, blue: 0.86, alpha: 1)
+        case (.blueprint, .conjunction):      return UIColor(red: 0.80, green: 0.68, blue: 1.00, alpha: 1)
+        case (.blueprint, .number):           return UIColor(red: 1.00, green: 0.94, blue: 0.56, alpha: 1)
             
             // Dark theme
         case (.dark, .placeName):          return #colorLiteral(red: 0.968627451, green: 0.568627451, blue: 0.3647058824, alpha: 1)

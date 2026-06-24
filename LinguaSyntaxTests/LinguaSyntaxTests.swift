@@ -108,6 +108,20 @@ struct StringExtensionTests {
     }
 }
 
+struct ThemeTests {
+    @Test func builtInThemesHaveDisplayNames() {
+        let themeNames = Theme.allCases.map(\.name)
+
+        #expect(themeNames == [
+            "Office",
+            "Scholastic",
+            "Editorial",
+            "Blueprint",
+            "Dark"
+        ])
+    }
+}
+
 private final class ChangeCountingDelegate: NSObject, UITextViewDelegate {
     var changeCount = 0
 

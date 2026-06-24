@@ -12,7 +12,7 @@ final class MoreMenuButton: UIButton {
         super.awakeFromNib()
 
         showsMenuAsPrimaryAction = true
-        accessibilityLabel = "More"
+        accessibilityLabel = String(localized: "More")
 
         if #available(iOS 26.0, *) {
             var configuration = UIButton.Configuration.prominentClearGlass()

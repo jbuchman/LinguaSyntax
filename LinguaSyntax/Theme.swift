@@ -49,11 +49,11 @@ public enum Theme: Equatable {
 
     var name: String {
         switch self {
-        case .office: return "Office"
-        case .scholastic: return "Scholastic"
-        case .editorial: return "Editorial"
-        case .blueprint: return "Blueprint"
-        case .dark: return "Dark"
+        case .office: return String(localized: "Office")
+        case .scholastic: return String(localized: "Scholastic")
+        case .editorial: return String(localized: "Editorial")
+        case .blueprint: return String(localized: "Blueprint")
+        case .dark: return String(localized: "Dark")
         case .custom(let customTheme): return customTheme.name
         }
     }
@@ -200,7 +200,7 @@ public struct CustomTheme: Codable, Equatable {
     public var tagStyles: [String: CustomTagStyle]
 
     public init(
-        name: String = "Custom",
+        name: String = String(localized: "Custom"),
         interfaceStyle: InterfaceStyle = .dark,
         backgroundColor: ThemeColor = ThemeColor(red: 0.09, green: 0.10, blue: 0.12),
         tagStyles: [String: CustomTagStyle] = CustomTheme.defaultTagStyles
@@ -229,7 +229,7 @@ public struct CustomTheme: Codable, Equatable {
         }
 
         self.init(
-            name: "Custom",
+            name: String(localized: "Custom"),
             interfaceStyle: interfaceStyle,
             backgroundColor: ThemeColor(color: theme.backgroundColor),
             tagStyles: tagStyles

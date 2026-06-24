@@ -78,12 +78,12 @@ class CounterViewController: UIViewController {
 
     private func confirmCustomThemeOverride(basedOn theme: Theme) {
         let alertController = UIAlertController(
-            title: "Override Custom Theme?",
-            message: "Use \(theme.name) as the starting point for a new custom theme.",
+            title: String(localized: "Override Custom Theme?"),
+            message: String(localized: "Use \(theme.name) as the starting point for a new custom theme."),
             preferredStyle: .alert
         )
-        alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-        alertController.addAction(UIAlertAction(title: "Use \(theme.name)", style: .default) { [weak self] _ in
+        alertController.addAction(UIAlertAction(title: String(localized: "Cancel"), style: .cancel))
+        alertController.addAction(UIAlertAction(title: String(localized: "Use \(theme.name)"), style: .default) { [weak self] _ in
             self?.presentCustomThemeEditor(theme: CustomTheme(basedOn: theme))
         })
 
@@ -105,33 +105,33 @@ class CounterViewController: UIViewController {
                 self?.select(theme: theme)
             }
         }
-        let customThemeAction = UIAction(title: "Custom", state: currentTheme.isCustom ? .on : .off) { [weak self] _ in
+        let customThemeAction = UIAction(title: String(localized: "Custom"), state: currentTheme.isCustom ? .on : .off) { [weak self] _ in
             self?.select(theme: .custom(Settings.loadCustomTheme()))
         }
-        let editCustomThemeAction = UIAction(title: "Edit Custom Theme", image: UIImage(systemName: "paintpalette")) { [weak self] _ in
+        let editCustomThemeAction = UIAction(title: String(localized: "Edit Custom Theme"), image: UIImage(systemName: "paintpalette")) { [weak self] _ in
             self?.editCustomTheme()
         }
 
         moreButton.menu = UIMenu(children: [
-            UIMenu(title: "Theme", children: themes + [customThemeAction, editCustomThemeAction]),
+            UIMenu(title: String(localized: "Theme"), children: themes + [customThemeAction, editCustomThemeAction]),
             UIMenu(options: [.displayInline], children: [
-                UIAction(title: "Cut All", image: UIImage(systemName: "scissors")) { [weak self] _ in
+                UIAction(title: String(localized: "Cut All"), image: UIImage(systemName: "scissors")) { [weak self] _ in
                     self?.sourceTextView?.cutAll()
                 },
-                UIAction(title: "Copy All", image: UIImage(systemName: "doc.on.doc")) { [weak self] _ in
+                UIAction(title: String(localized: "Copy All"), image: UIImage(systemName: "doc.on.doc")) { [weak self] _ in
                     self?.sourceTextView?.copyAll()
                 },
-                UIAction(title: "Replace All", image: UIImage(systemName: "document.on.clipboard")) { [weak self] _ in
+                UIAction(title: String(localized: "Replace All"), image: UIImage(systemName: "document.on.clipboard")) { [weak self] _ in
                     self?.sourceTextView?.replaceAllWithPasteboardText()
                 },
             ]),
             UIMenu(options: .displayInline, children: [
-                UIAction(title: "Select All", image: UIImage(systemName: "selection.pin.in.out")) { [weak self] action in
+                UIAction(title: String(localized: "Select All"), image: UIImage(systemName: "selection.pin.in.out")) { [weak self] action in
                     self?.sourceTextView?.selectAll(action)
                 },
             ]),
             UIMenu(options: .displayInline, children: [
-                UIAction(title: "Delete All", image: UIImage(systemName: "trash"), attributes: .destructive) { [weak self] _ in
+                UIAction(title: String(localized: "Delete All"), image: UIImage(systemName: "trash"), attributes: .destructive) { [weak self] _ in
                     self?.sourceTextView?.deleteAll()
                 },
             ])

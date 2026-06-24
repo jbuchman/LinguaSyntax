@@ -33,7 +33,7 @@ final class CustomThemeViewController: UIViewController, UIColorPickerViewContro
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        title = "Custom Theme"
+        title = String(localized: "Custom Theme")
         navigationItem.leftBarButtonItem = UIBarButtonItem(systemItem: .cancel, primaryAction: UIAction { [weak self] _ in
             self?.dismiss(animated: true)
         })
@@ -90,8 +90,8 @@ final class CustomThemeViewController: UIViewController, UIColorPickerViewContro
         }
 
         stackView.addArrangedSubview(makeInterfaceStyleSection())
-        stackView.addArrangedSubview(makeColorRow(title: "Background", color: draft.backgroundColor.uiColor, target: .background))
-        stackView.addArrangedSubview(makeSectionHeader("Parts of Speech"))
+        stackView.addArrangedSubview(makeColorRow(title: String(localized: "Background"), color: draft.backgroundColor.uiColor, target: .background))
+        stackView.addArrangedSubview(makeSectionHeader(String(localized: "Parts of Speech")))
 
         for tag in CustomTheme.editableTags {
             stackView.addArrangedSubview(makeTagRow(tag: tag))
@@ -120,8 +120,11 @@ final class CustomThemeViewController: UIViewController, UIColorPickerViewContro
         container.axis = .vertical
         container.spacing = 8
 
-        let label = makeSectionHeader("Base Interface Style")
-        let segmentedControl = UISegmentedControl(items: ["Light", "Dark"])
+        let label = makeSectionHeader(String(localized: "Base Interface Style"))
+        let segmentedControl = UISegmentedControl(items: [
+            String(localized: "Light"),
+            String(localized: "Dark")
+        ])
         segmentedControl.selectedSegmentIndex = draft.interfaceStyle == .light ? 0 : 1
         segmentedControl.addAction(UIAction { [weak self] _ in
             guard let self else { return }
@@ -175,7 +178,7 @@ final class CustomThemeViewController: UIViewController, UIColorPickerViewContro
         button.layer.cornerRadius = 8
         button.layer.borderColor = UIColor.separator.cgColor
         button.layer.borderWidth = 1
-        button.accessibilityLabel = "Choose \(title) color"
+        button.accessibilityLabel = String(localized: "Choose \(title) color")
         button.addAction(UIAction { [weak self] _ in
             self?.presentColorPicker(for: target, color: color)
         }, for: .touchUpInside)
@@ -192,9 +195,9 @@ final class CustomThemeViewController: UIViewController, UIColorPickerViewContro
 
     private func makeStyleControl(for tag: NLTag, style: CustomTagStyle) -> MultiSelectSegmentedControl {
         let control = MultiSelectSegmentedControl(segments: [
-            MultiSelectSegmentedControl.Segment(title: "Bold", attributes: styleTitleAttributes(isBold: true)),
-            MultiSelectSegmentedControl.Segment(title: "Italic", attributes: styleTitleAttributes(isItalic: true)),
-            MultiSelectSegmentedControl.Segment(title: "Underline", attributes: styleTitleAttributes(isUnderlined: true))
+            MultiSelectSegmentedControl.Segment(title: String(localized: "Bold"), attributes: styleTitleAttributes(isBold: true)),
+            MultiSelectSegmentedControl.Segment(title: String(localized: "Italic"), attributes: styleTitleAttributes(isItalic: true)),
+            MultiSelectSegmentedControl.Segment(title: String(localized: "Underline"), attributes: styleTitleAttributes(isUnderlined: true))
         ])
         var selectedIndexes = Set<Int>()
         if style.isBold {

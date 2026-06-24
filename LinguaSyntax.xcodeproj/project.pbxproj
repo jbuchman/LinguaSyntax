@@ -29,6 +29,7 @@
 		78FE2EDB2FECA0D500D111A5 /* LinguaSyntaxShareExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 78FE2ED12FECA0D400D111A5 /* LinguaSyntaxShareExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		78FE2EE22FECA22800D111A5 /* TextImporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78FE2EE12FECA22800D111A5 /* TextImporter.swift */; };
 		78FE2EE42FECA24900D111A5 /* LinguaSyntaxShortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78FE2EE32FECA24900D111A5 /* LinguaSyntaxShortcuts.swift */; };
+		78FE2EE62FECA3A200D111A5 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 78FE2EE52FECA3A200D111A5 /* Localizable.xcstrings */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -88,6 +89,7 @@
 		78FE2ED12FECA0D400D111A5 /* LinguaSyntaxShareExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = LinguaSyntaxShareExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		78FE2EE12FECA22800D111A5 /* TextImporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextImporter.swift; sourceTree = "<group>"; };
 		78FE2EE32FECA24900D111A5 /* LinguaSyntaxShortcuts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinguaSyntaxShortcuts.swift; sourceTree = "<group>"; };
+		78FE2EE52FECA3A200D111A5 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -186,6 +188,7 @@
 				78FE2ECB2FEC9E8100D111A5 /* MultiSelectSegmentedControl.swift */,
 				78FE2EE12FECA22800D111A5 /* TextImporter.swift */,
 				78FE2EE32FECA24900D111A5 /* LinguaSyntaxShortcuts.swift */,
+				78FE2EE52FECA3A200D111A5 /* Localizable.xcstrings */,
 			);
 			path = LinguaSyntax;
 			sourceTree = "<group>";
@@ -309,6 +312,7 @@
 			files = (
 				78FE2EB32FEA626C00D111A5 /* Assets.xcassets in Resources */,
 				78FE2EB42FEA626C00D111A5 /* Main.storyboard in Resources */,
+				78FE2EE62FECA3A200D111A5 /* Localizable.xcstrings in Resources */,
 				78FE2EB52FEA626C00D111A5 /* LaunchScreen.storyboard in Resources */,
 				78FE2EB92FEA681000D111A5 /* Icon.icon in Resources */,
 				78FE2EB72FEA626C00D111A5 /* README.md in Resources */,

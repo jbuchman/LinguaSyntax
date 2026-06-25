@@ -135,7 +135,10 @@ class ViewController: UIViewController {
 
     private func keyboardFrameWillChange(_ notification: Notification) {
         keyboardOverlapHeight = keyboardOverlap(from: notification)
-        configureCounterSheet(animated: true)
+        configureCounterSheet(
+            animated: true,
+            selectedDetentIdentifier: keyboardOverlapHeight > 0 ? Constants.minimizedIdentifier : nil
+        )
     }
 
     private func keyboardOverlap(from notification: Notification) -> CGFloat {
@@ -149,7 +152,10 @@ class ViewController: UIViewController {
         return max(0, view.bounds.maxY - keyboardFrameInView.minY)
     }
 
-    private func configureCounterSheet(animated: Bool = false) {
+    private func configureCounterSheet(
+        animated: Bool = false,
+        selectedDetentIdentifier: UISheetPresentationController.Detent.Identifier? = nil
+    ) {
         guard let sheet = counterViewController?.sheetPresentationController else {
             return
         }
@@ -159,6 +165,10 @@ class ViewController: UIViewController {
             sheet.detents = [self.minimizedDetent(), .medium(), .large()]
             sheet.largestUndimmedDetentIdentifier = .large
             sheet.prefersGrabberVisible = true
+            if let selectedDetentIdentifier {
+                sheet.selectedDetentIdentifier = selectedDetentIdentifier
+                self.counterViewController?.updateAppearance(isMinimized: selectedDetentIdentifier == Constants.minimizedIdentifier)
+            }
         }
 
         if animated {
@@ -170,7 +180,11 @@ class ViewController: UIViewController {
 
     private func minimizedDetent() -> UISheetPresentationController.Detent {
         UISheetPresentationController.Detent.custom(identifier: Constants.minimizedIdentifier) { [weak self] _ in
-            Constants.minimizedDetentHeight + (self?.keyboardOverlapHeight ?? 0)
+            let keyboardOverlapHeight = self?.keyboardOverlapHeight ?? 0
+            let visibleHeight = keyboardOverlapHeight > 0
+                ? Constants.keyboardMinimizedDetentVisibleHeight
+                : Constants.minimizedDetentHeight
+            return visibleHeight + keyboardOverlapHeight
         }
     }
 }

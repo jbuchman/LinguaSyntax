@@ -138,7 +138,7 @@ class CounterViewController: UIViewController {
         ])
     }
     
-    func updateAppearance(theme: Theme? = nil) {
+    func updateAppearance(theme: Theme? = nil, isMinimized: Bool? = nil) {
         let theme = theme ?? settings.theme
 
         overrideUserInterfaceStyle = theme.interfaceStyle
@@ -148,8 +148,9 @@ class CounterViewController: UIViewController {
 
         let updateViews = { [weak self] in
             guard let self else { return }
+            let shouldHidePartsOfSpeech = isMinimized ?? (sheetPresentationController?.selectedDetentIdentifier == Constants.minimizedIdentifier)
             view.backgroundColor = theme.secondaryBackground(traitCollection: traitCollection)
-            partsOfSpeechTextView.isHidden = sheetPresentationController?.selectedDetentIdentifier == Constants.minimizedIdentifier
+            partsOfSpeechTextView.isHidden = shouldHidePartsOfSpeech
         }
 
         if let sheetPresentationController {

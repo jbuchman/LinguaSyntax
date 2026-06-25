@@ -18,6 +18,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var placeholderLabel: UILabel!
     let settings = Settings()
     var cancellables: Set<AnyCancellable> = []
+    private var keyboardOverlapHeight: CGFloat = 0
 
     lazy var counterViewController: CounterViewController? = {
         storyboard?.instantiateViewController(identifier: "counter") { coder in
@@ -50,6 +51,14 @@ class ViewController: UIViewController {
 
             self.updateSyntaxHighlight(theme: theme)
         }).store(in: &cancellables)
+
+        NotificationCenter.default.publisher(for: UIResponder.keyboardWillChangeFrameNotification)
+            .merge(with: NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification))
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] notification in
+                self?.keyboardFrameWillChange(notification)
+            }
+            .store(in: &cancellables)
     }
         
     override func viewDidAppear(_ animated: Bool) {
@@ -61,18 +70,7 @@ class ViewController: UIViewController {
         counterViewController.modalPresentationStyle = .pageSheet
         counterViewController.isModalInPresentation = true // CRITICAL FIX: Blocks pull-down dismiss gestures!
         
-        // 2. Configure the sheet presentation layer once active
-        if let sheet = counterViewController.sheetPresentationController {
-            sheet.delegate = self
-            
-            let minimizedDetent = UISheetPresentationController.Detent.custom(identifier: Constants.minimizedIdentifier) { _ in
-                return 70 // Apple maps minimized height boundary line
-            }
-            
-            sheet.detents = [minimizedDetent, .medium(), .large()]
-            sheet.largestUndimmedDetentIdentifier = .large // Keeps your text view scrolling interactive
-            sheet.prefersGrabberVisible = true
-        }
+        configureCounterSheet()
 
         present(counterViewController, animated: true)
     }
@@ -133,6 +131,47 @@ class ViewController: UIViewController {
         }
 
         textView.textStorage.endEditing()
+    }
+
+    private func keyboardFrameWillChange(_ notification: Notification) {
+        keyboardOverlapHeight = keyboardOverlap(from: notification)
+        configureCounterSheet(animated: true)
+    }
+
+    private func keyboardOverlap(from notification: Notification) -> CGFloat {
+        guard notification.name != UIResponder.keyboardWillHideNotification,
+              let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect,
+              let window = view.window else {
+            return 0
+        }
+
+        let keyboardFrameInView = view.convert(keyboardFrame, from: window.screen.coordinateSpace)
+        return max(0, view.bounds.maxY - keyboardFrameInView.minY)
+    }
+
+    private func configureCounterSheet(animated: Bool = false) {
+        guard let sheet = counterViewController?.sheetPresentationController else {
+            return
+        }
+
+        let updateSheet = {
+            sheet.delegate = self
+            sheet.detents = [self.minimizedDetent(), .medium(), .large()]
+            sheet.largestUndimmedDetentIdentifier = .large
+            sheet.prefersGrabberVisible = true
+        }
+
+        if animated {
+            sheet.animateChanges(updateSheet)
+        } else {
+            updateSheet()
+        }
+    }
+
+    private func minimizedDetent() -> UISheetPresentationController.Detent {
+        UISheetPresentationController.Detent.custom(identifier: Constants.minimizedIdentifier) { [weak self] _ in
+            Constants.minimizedDetentHeight + (self?.keyboardOverlapHeight ?? 0)
+        }
     }
 }
 

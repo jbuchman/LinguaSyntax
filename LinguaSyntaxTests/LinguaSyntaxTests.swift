@@ -174,6 +174,68 @@ struct ThemeTests {
     }
 }
 
+@MainActor
+struct CounterViewControllerTests {
+    @Test func rtfExportIncludesThemeBackgroundColor() throws {
+        let attributedText = NSAttributedString(
+            string: "Styled text",
+            attributes: [
+                .font: UIFont.preferredFont(forTextStyle: .body),
+                .foregroundColor: UIColor.systemRed
+            ]
+        )
+
+        let data = try CounterViewController.rtfData(from: attributedText, theme: .blueprint)
+        let exportedText = try NSAttributedString(
+            data: data,
+            options: [.documentType: NSAttributedString.DocumentType.rtf],
+            documentAttributes: nil
+        )
+        let backgroundColor = exportedText.attribute(.backgroundColor, at: 0, effectiveRange: nil) as? UIColor
+
+        #expect(exportedText.string == "Styled text")
+        #expect(backgroundColor == Theme.blueprint.backgroundColor)
+    }
+}
+
+struct CounterSheetDetentTests {
+    @Test func keyboardVisibleDetentsOmitMediumDetent() {
+        #expect(ViewController.counterSheetDetentIdentifiers(isKeyboardVisible: true) == [
+            Constants.minimizedIdentifier,
+            Constants.keyboardTextViewHalfIdentifier,
+            .large
+        ])
+    }
+
+    @Test func keyboardHiddenDetentsIncludeMediumDetent() {
+        #expect(ViewController.counterSheetDetentIdentifiers(isKeyboardVisible: false) == [
+            Constants.minimizedIdentifier,
+            .medium,
+            .large
+        ])
+    }
+
+    @Test func keyboardHalfDetentUsesHalfOfAvailableHeightAboveKeyboard() {
+        let height = ViewController.keyboardTextViewHalfDetentHeight(
+            viewHeight: 800,
+            keyboardOverlapHeight: 300,
+            maximumDetentValue: 800
+        )
+
+        #expect(height == 550)
+    }
+
+    @Test func keyboardHalfDetentIsCappedToMaximumDetentValue() {
+        let height = ViewController.keyboardTextViewHalfDetentHeight(
+            viewHeight: 800,
+            keyboardOverlapHeight: 300,
+            maximumDetentValue: 500
+        )
+
+        #expect(height == 500)
+    }
+}
+
 struct ShareImportTests {
     @Test func importURLExtractsSharedText() throws {
         var components = URLComponents()

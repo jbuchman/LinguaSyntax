@@ -20,6 +20,7 @@ class CounterViewController: UIViewController {
     private lazy var keyboardDismissSpacerView = makeKeyboardDismissSpacerView()
     private lazy var keyboardDismissButton = makeKeyboardDismissButton()
     private var keyboardDismissSpacerWidthConstraint: NSLayoutConstraint?
+    private var sharedRTFURL: URL?
     let settings: Settings
     weak var sourceTextView: TextView?
     var cancellables: Set<AnyCancellable> = []
@@ -177,6 +178,56 @@ class CounterViewController: UIViewController {
         present(navigationController, animated: true)
     }
 
+    private func shareRTF() {
+        guard let attributedText = sourceTextView?.attributedText,
+              attributedText.length > 0 else {
+            presentRTFShareFailure()
+            return
+        }
+
+        do {
+            let data = try Self.rtfData(from: attributedText, theme: settings.theme)
+            let fileURL = FileManager.default.temporaryDirectory
+                .appendingPathComponent("LinguaSyntax")
+                .appendingPathExtension("rtf")
+            try data.write(to: fileURL, options: .atomic)
+            sharedRTFURL = fileURL
+
+            let activityViewController = UIActivityViewController(activityItems: [fileURL], applicationActivities: nil)
+            activityViewController.popoverPresentationController?.sourceView = moreButton
+            activityViewController.popoverPresentationController?.sourceRect = moreButton.bounds
+            activityViewController.completionWithItemsHandler = { [weak self] _, _, _, _ in
+                self?.sharedRTFURL = nil
+            }
+            present(activityViewController, animated: true)
+        } catch {
+            presentRTFShareFailure()
+        }
+    }
+
+    static func rtfData(from attributedText: NSAttributedString, theme: Theme) throws -> Data {
+        let rtfText = NSMutableAttributedString(attributedString: attributedText)
+        let range = NSRange(location: 0, length: rtfText.length)
+        rtfText.addAttribute(.backgroundColor, value: theme.backgroundColor, range: range)
+        return try rtfText.data(
+            from: range,
+            documentAttributes: [
+                .documentType: NSAttributedString.DocumentType.rtf,
+                .backgroundColor: theme.backgroundColor
+            ]
+        )
+    }
+
+    private func presentRTFShareFailure() {
+        let alertController = UIAlertController(
+            title: String(localized: "Share Failed"),
+            message: String(localized: "LinguaSyntax could not prepare the styled text for sharing."),
+            preferredStyle: .alert
+        )
+        alertController.addAction(UIAlertAction(title: String(localized: "OK"), style: .default))
+        present(alertController, animated: true)
+    }
+
     private func generateMenu(theme currentTheme: Theme) {
         let themes: [UIAction] = Theme.builtInThemes.map { theme in
             UIAction(title: theme.name, state: theme == currentTheme ? .on : .off) { [weak self] _ in
@@ -201,6 +252,11 @@ class CounterViewController: UIViewController {
                 },
                 UIAction(title: String(localized: "Replace All"), image: UIImage(systemName: "document.on.clipboard")) { [weak self] _ in
                     self?.sourceTextView?.replaceAllWithPasteboardText()
+                },
+            ]),
+            UIMenu(options: .displayInline, children: [
+                UIAction(title: String(localized: "Share RTF"), image: UIImage(systemName: "square.and.arrow.up")) { [weak self] _ in
+                    self?.shareRTF()
                 },
             ]),
             UIMenu(options: .displayInline, children: [

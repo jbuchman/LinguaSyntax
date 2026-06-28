@@ -181,11 +181,26 @@ class ViewController: UIViewController {
     }
 
     private func counterSheetDetents() -> [UISheetPresentationController.Detent] {
-        if keyboardOverlapHeight > 0 {
-            return [minimizedDetent(), keyboardTextViewHalfDetent(), .large()]
+        Self.counterSheetDetentIdentifiers(isKeyboardVisible: keyboardOverlapHeight > 0).map { identifier in
+            switch identifier {
+            case Constants.minimizedIdentifier:
+                return minimizedDetent()
+            case Constants.keyboardTextViewHalfIdentifier:
+                return keyboardTextViewHalfDetent()
+            case .medium:
+                return .medium()
+            default:
+                return .large()
+            }
+        }
+    }
+
+    static func counterSheetDetentIdentifiers(isKeyboardVisible: Bool) -> [UISheetPresentationController.Detent.Identifier] {
+        if isKeyboardVisible {
+            return [Constants.minimizedIdentifier, Constants.keyboardTextViewHalfIdentifier, .large]
         }
 
-        return [minimizedDetent(), .medium(), .large()]
+        return [Constants.minimizedIdentifier, .medium, .large]
     }
 
     private func minimizedDetent() -> UISheetPresentationController.Detent {
@@ -204,11 +219,23 @@ class ViewController: UIViewController {
                 return context.maximumDetentValue
             }
 
-            let availableHeightAboveKeyboard = max(0, view.bounds.height - keyboardOverlapHeight)
-            let visibleHeight = availableHeightAboveKeyboard / 2
-            let detentHeight = keyboardOverlapHeight + visibleHeight
-            return min(detentHeight, context.maximumDetentValue)
+            return Self.keyboardTextViewHalfDetentHeight(
+                viewHeight: view.bounds.height,
+                keyboardOverlapHeight: keyboardOverlapHeight,
+                maximumDetentValue: context.maximumDetentValue
+            )
         }
+    }
+
+    static func keyboardTextViewHalfDetentHeight(
+        viewHeight: CGFloat,
+        keyboardOverlapHeight: CGFloat,
+        maximumDetentValue: CGFloat
+    ) -> CGFloat {
+        let availableHeightAboveKeyboard = max(0, viewHeight - keyboardOverlapHeight)
+        let visibleHeight = availableHeightAboveKeyboard / 2
+        let detentHeight = keyboardOverlapHeight + visibleHeight
+        return min(detentHeight, maximumDetentValue)
     }
 }
 

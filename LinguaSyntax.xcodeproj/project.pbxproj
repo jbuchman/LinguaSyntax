@@ -66,6 +66,7 @@
 /* Begin PBXFileReference section */
 		78262C5C2FE6C8330099A294 /* LinguaSyntax.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LinguaSyntax.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		78E9B0412FF193660051F4F1 /* LinguaSyntax.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = LinguaSyntax.entitlements; sourceTree = "<group>"; };
+		78E9B0432FF19BCD0051F4F1 /* LinguaSyntax.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = LinguaSyntax.xctestplan; sourceTree = SOURCE_ROOT; };
 		78FE2E952FEA626C00D111A5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		78FE2E962FEA626C00D111A5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		78FE2E972FEA626C00D111A5 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
@@ -173,6 +174,7 @@
 				78FE2E962FEA626C00D111A5 /* Assets.xcassets */,
 				78FE2E972FEA626C00D111A5 /* Constants.swift */,
 				78FE2E982FEA626C00D111A5 /* CounterViewController.swift */,
+				78E9B0432FF19BCD0051F4F1 /* LinguaSyntax.xctestplan */,
 				78FE2E992FEA626C00D111A5 /* Info.plist */,
 				78FE2E9B2FEA626C00D111A5 /* LaunchScreen.storyboard */,
 				78FE2E9D2FEA626C00D111A5 /* Main.storyboard */,

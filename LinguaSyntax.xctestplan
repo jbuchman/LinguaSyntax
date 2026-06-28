@@ -1,0 +1,30 @@
+{
+  "configurations" : [
+    {
+      "id" : "5853F802-72CD-4F37-9518-BED3938E69CA",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : false,
+    "performanceAntipatternCheckerEnabled" : true,
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:LinguaSyntax.xcodeproj",
+      "identifier" : "78262C5B2FE6C8330099A294",
+      "name" : "LinguaSyntax"
+    }
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:LinguaSyntax.xcodeproj",
+        "identifier" : "78FE2EBF2FEC9AF100D111A5",
+        "name" : "LinguaSyntaxTests"
+      }
+    }
+  ],
+  "version" : 1
+}

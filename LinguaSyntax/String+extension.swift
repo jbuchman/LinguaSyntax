@@ -17,13 +17,18 @@ extension String {
     ]
 
     /// Apply syntax highlighting to the attributed string.
-    func highlightSyntax(theme: Theme, options: NLTagger.Options = Self.syntaxTaggerOptions) -> AttributedString {
+    func highlightSyntax(
+        theme: Theme,
+        options: NLTagger.Options = Self.syntaxTaggerOptions,
+        languageHint: NLLanguage? = nil
+    ) -> AttributedString {
         guard !self.isEmpty else {
             return AttributedString(self)
         }
         
         let tagger = NLTagger(tagSchemes: [.nameTypeOrLexicalClass])
         tagger.string = self
+        tagger.setLanguageHint(languageHint, for: self)
         
         var attributedString = AttributedString()
         var currentIndex = startIndex
@@ -62,13 +67,14 @@ extension String {
         return tokens.count
     }
 
-    func partsOfSpeech(theme: Theme) -> AttributedString {
+    func partsOfSpeech(theme: Theme, languageHint: NLLanguage? = nil) -> AttributedString {
         guard !self.isEmpty else {
             return AttributedString()
         }
         
         let tagger = NLTagger(tagSchemes: [.nameTypeOrLexicalClass])
         tagger.string = self
+        tagger.setLanguageHint(languageHint, for: self)
         var tags = [NLTag: Int]()
         tagger.enumerateTags(in: self.startIndex..<self.endIndex, unit: .word, scheme: .nameTypeOrLexicalClass, options: Self.syntaxTaggerOptions) { tag, tokenRange in
             guard let tag, tag != .other else {
@@ -88,6 +94,33 @@ extension String {
         }
             
         return attributedStrings.joined(separator: "\n")
+    }
+}
+
+extension NLTagger {
+    func setLanguageHint(_ language: NLLanguage?, for string: String) {
+        guard let language, !string.isEmpty else {
+            return
+        }
+
+        setLanguage(language, range: string.startIndex..<string.endIndex)
+    }
+}
+
+extension NLLanguage {
+    init?(textInputPrimaryLanguage: String?) {
+        guard let textInputPrimaryLanguage,
+              textInputPrimaryLanguage != "emoji" else {
+            return nil
+        }
+
+        self.init(textInputPrimaryLanguage)
+    }
+}
+
+extension UITextInputMode {
+    var naturalLanguageHint: NLLanguage? {
+        NLLanguage(textInputPrimaryLanguage: primaryLanguage)
     }
 }
 

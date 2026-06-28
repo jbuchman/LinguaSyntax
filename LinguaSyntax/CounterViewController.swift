@@ -140,7 +140,9 @@ class CounterViewController: UIViewController {
         let theme = theme ?? settings.theme
         wordLabel.text = "\(text.wordCount)"
         characterLabel.text = "\(text.count)"
-        partsOfSpeechTextView.attributedText = NSAttributedString(text.partsOfSpeech(theme: theme))
+        partsOfSpeechTextView.attributedText = NSAttributedString(
+            text.partsOfSpeech(theme: theme, languageHint: sourceTextView?.textInputMode?.naturalLanguageHint)
+        )
     }
 
     private func select(theme: Theme) {

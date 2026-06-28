@@ -121,6 +121,7 @@ class ViewController: UIViewController {
 
         let tagger = NLTagger(tagSchemes: [.nameTypeOrLexicalClass])
         tagger.string = string
+        tagger.setLanguageHint(textView.textInputMode?.naturalLanguageHint, for: string)
         tagger.enumerateTags(in: string.startIndex..<string.endIndex, unit: .word, scheme: .nameTypeOrLexicalClass, options: String.syntaxTaggerOptions) { tag, tokenRange in
             guard let tag else {
                 return true

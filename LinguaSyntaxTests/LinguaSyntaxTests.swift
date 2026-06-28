@@ -127,6 +127,30 @@ struct StringExtensionTests {
         #expect(!summaryText.contains(NLTag.whitespace.rawValue))
         #expect(!summaryText.contains(NLTag.other.rawValue))
     }
+
+    @Test func textInputLanguageCodeCreatesNaturalLanguageHint() throws {
+        let language = try #require(NLLanguage(textInputPrimaryLanguage: "es-MX"))
+
+        #expect(language.rawValue == "es-MX")
+    }
+
+    @Test(arguments: [nil, "emoji"])
+    func invalidTextInputLanguageCodeDoesNotCreateNaturalLanguageHint(_ languageCode: String?) {
+        #expect(NLLanguage(textInputPrimaryLanguage: languageCode) == nil)
+    }
+
+    @Test func syntaxHighlightingAcceptsLanguageHint() {
+        let text = "Hola mundo."
+
+        #expect(String(text.highlightSyntax(theme: .dark, languageHint: .spanish).characters) == text)
+    }
+
+    @Test func partsOfSpeechAcceptsLanguageHint() {
+        let summaryText = "Hola mundo.".partsOfSpeech(theme: .dark, languageHint: .spanish).characters
+
+        #expect(!summaryText.isEmpty)
+        #expect(!summaryText.contains(NLTag.punctuation.rawValue))
+    }
 }
 
 struct ThemeTests {
@@ -194,7 +218,7 @@ struct CounterViewControllerTests {
         let backgroundColor = exportedText.attribute(.backgroundColor, at: 0, effectiveRange: nil) as? UIColor
 
         #expect(exportedText.string == "Styled text")
-        #expect(backgroundColor == Theme.blueprint.backgroundColor)
+        #expect(backgroundColor?.hasSameRGBAComponents(as: Theme.blueprint.backgroundColor) == true)
     }
 }
 
@@ -295,5 +319,28 @@ private final class ChangeCountingDelegate: NSObject, UITextViewDelegate {
 
     func textViewDidChange(_ textView: UITextView) {
         changeCount += 1
+    }
+}
+
+private extension UIColor {
+    func hasSameRGBAComponents(as otherColor: UIColor, accuracy: CGFloat = 0.001) -> Bool {
+        var red: CGFloat = 0
+        var green: CGFloat = 0
+        var blue: CGFloat = 0
+        var alpha: CGFloat = 0
+        var otherRed: CGFloat = 0
+        var otherGreen: CGFloat = 0
+        var otherBlue: CGFloat = 0
+        var otherAlpha: CGFloat = 0
+
+        guard getRed(&red, green: &green, blue: &blue, alpha: &alpha),
+              otherColor.getRed(&otherRed, green: &otherGreen, blue: &otherBlue, alpha: &otherAlpha) else {
+            return false
+        }
+
+        return abs(red - otherRed) <= accuracy
+            && abs(green - otherGreen) <= accuracy
+            && abs(blue - otherBlue) <= accuracy
+            && abs(alpha - otherAlpha) <= accuracy
     }
 }

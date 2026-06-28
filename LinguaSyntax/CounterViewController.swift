@@ -19,6 +19,7 @@ class CounterViewController: UIViewController {
     private lazy var keyboardDismissButtonContainerView = makeKeyboardDismissButtonContainerView()
     private lazy var keyboardDismissSpacerView = makeKeyboardDismissSpacerView()
     private lazy var keyboardDismissButton = makeKeyboardDismissButton()
+    private var keyboardDismissSpacerWidthConstraint: NSLayoutConstraint?
     let settings: Settings
     weak var sourceTextView: TextView?
     var cancellables: Set<AnyCancellable> = []
@@ -62,8 +63,15 @@ class CounterViewController: UIViewController {
     }
 
     func setKeyboardDismissButtonVisible(_ isVisible: Bool) {
-        keyboardDismissButtonContainerView.isHidden = !isVisible
-        keyboardDismissSpacerView.isHidden = !isVisible
+        if isVisible {
+            keyboardDismissButtonContainerView.isHidden = false
+            keyboardDismissSpacerView.isHidden = false
+            keyboardDismissSpacerWidthConstraint?.isActive = true
+        } else {
+            keyboardDismissSpacerWidthConstraint?.isActive = false
+            keyboardDismissButtonContainerView.isHidden = true
+            keyboardDismissSpacerView.isHidden = true
+        }
     }
 
     private func configureKeyboardDismissButton() {
@@ -78,13 +86,14 @@ class CounterViewController: UIViewController {
         stackView.insertArrangedSubview(keyboardDismissButtonContainerView, at: 0)
         stackView.insertArrangedSubview(keyboardDismissSpacerView, at: 1)
 
+        keyboardDismissSpacerWidthConstraint = keyboardDismissSpacerView.widthAnchor.constraint(equalTo: counterSpacerView.widthAnchor)
+
         NSLayoutConstraint.activate([
             keyboardDismissButton.centerXAnchor.constraint(equalTo: keyboardDismissButtonContainerView.centerXAnchor),
             keyboardDismissButton.centerYAnchor.constraint(equalTo: keyboardDismissButtonContainerView.centerYAnchor),
             keyboardDismissButton.widthAnchor.constraint(equalToConstant: 44),
             keyboardDismissButton.heightAnchor.constraint(equalToConstant: 44),
-            keyboardDismissButtonContainerView.widthAnchor.constraint(equalToConstant: 44),
-            keyboardDismissSpacerView.widthAnchor.constraint(equalTo: counterSpacerView.widthAnchor)
+            keyboardDismissButtonContainerView.widthAnchor.constraint(equalToConstant: 44)
         ])
     }
 

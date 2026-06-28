@@ -17,6 +17,7 @@ class CounterViewController: UIViewController {
     @IBOutlet weak var counterSpacerView: UIView!
     @IBOutlet weak var moreButtonContainerView: UIView!
     private lazy var keyboardDismissButtonContainerView = makeKeyboardDismissButtonContainerView()
+    private lazy var keyboardDismissSpacerView = makeKeyboardDismissSpacerView()
     private lazy var keyboardDismissButton = makeKeyboardDismissButton()
     let settings: Settings
     weak var sourceTextView: TextView?
@@ -62,6 +63,7 @@ class CounterViewController: UIViewController {
 
     func setKeyboardDismissButtonVisible(_ isVisible: Bool) {
         keyboardDismissButtonContainerView.isHidden = !isVisible
+        keyboardDismissSpacerView.isHidden = !isVisible
     }
 
     private func configureKeyboardDismissButton() {
@@ -71,16 +73,19 @@ class CounterViewController: UIViewController {
         }
 
         keyboardDismissButtonContainerView.addSubview(keyboardDismissButton)
+        keyboardDismissButtonContainerView.isHidden = true
+        keyboardDismissSpacerView.isHidden = true
+        stackView.insertArrangedSubview(keyboardDismissButtonContainerView, at: 0)
+        stackView.insertArrangedSubview(keyboardDismissSpacerView, at: 1)
+
         NSLayoutConstraint.activate([
             keyboardDismissButton.centerXAnchor.constraint(equalTo: keyboardDismissButtonContainerView.centerXAnchor),
             keyboardDismissButton.centerYAnchor.constraint(equalTo: keyboardDismissButtonContainerView.centerYAnchor),
             keyboardDismissButton.widthAnchor.constraint(equalToConstant: 44),
             keyboardDismissButton.heightAnchor.constraint(equalToConstant: 44),
-            keyboardDismissButtonContainerView.widthAnchor.constraint(equalToConstant: 44)
+            keyboardDismissButtonContainerView.widthAnchor.constraint(equalToConstant: 44),
+            keyboardDismissSpacerView.widthAnchor.constraint(equalTo: counterSpacerView.widthAnchor)
         ])
-
-        keyboardDismissButtonContainerView.isHidden = true
-        stackView.insertArrangedSubview(keyboardDismissButtonContainerView, at: 0)
     }
 
     private func makeKeyboardDismissButtonContainerView() -> UIView {
@@ -88,6 +93,15 @@ class CounterViewController: UIViewController {
         view.translatesAutoresizingMaskIntoConstraints = false
         view.setContentHuggingPriority(.required, for: .horizontal)
         view.setContentCompressionResistancePriority(.required, for: .horizontal)
+        return view
+    }
+
+    private func makeKeyboardDismissSpacerView() -> UIView {
+        let view = UIView()
+        view.backgroundColor = .clear
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        view.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         return view
     }
 

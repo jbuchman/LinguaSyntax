@@ -164,7 +164,7 @@ class ViewController: UIViewController {
 
         let updateSheet = {
             sheet.delegate = self
-            sheet.detents = [self.minimizedDetent(), .medium(), .large()]
+            sheet.detents = self.counterSheetDetents()
             sheet.largestUndimmedDetentIdentifier = .large
             sheet.prefersGrabberVisible = true
             if let selectedDetentIdentifier {
@@ -180,6 +180,14 @@ class ViewController: UIViewController {
         }
     }
 
+    private func counterSheetDetents() -> [UISheetPresentationController.Detent] {
+        if keyboardOverlapHeight > 0 {
+            return [minimizedDetent(), keyboardTextViewHalfDetent(), .large()]
+        }
+
+        return [minimizedDetent(), .medium(), .large()]
+    }
+
     private func minimizedDetent() -> UISheetPresentationController.Detent {
         UISheetPresentationController.Detent.custom(identifier: Constants.minimizedIdentifier) { [weak self] _ in
             let keyboardOverlapHeight = self?.keyboardOverlapHeight ?? 0
@@ -187,6 +195,19 @@ class ViewController: UIViewController {
                 ? Constants.keyboardMinimizedDetentVisibleHeight
                 : Constants.minimizedDetentHeight
             return visibleHeight + keyboardOverlapHeight
+        }
+    }
+
+    private func keyboardTextViewHalfDetent() -> UISheetPresentationController.Detent {
+        UISheetPresentationController.Detent.custom(identifier: Constants.keyboardTextViewHalfIdentifier) { [weak self] context in
+            guard let self else {
+                return context.maximumDetentValue
+            }
+
+            let availableHeightAboveKeyboard = max(0, view.bounds.height - keyboardOverlapHeight)
+            let visibleHeight = availableHeightAboveKeyboard / 2
+            let detentHeight = keyboardOverlapHeight + visibleHeight
+            return min(detentHeight, context.maximumDetentValue)
         }
     }
 }

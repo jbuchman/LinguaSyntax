@@ -1,27 +1,56 @@
 {
-  "fill" : {
-    "linear-gradient" : [
-      "display-p3:0.15294,0.16471,0.19608,1.00000",
-      "display-p3:0.27083,0.30612,0.35752,1.00000"
-    ],
-    "orientation" : {
-      "start" : {
-        "x" : 0.5,
-        "y" : 0
-      },
-      "stop" : {
-        "x" : 0.5,
-        "y" : 0.7
-      }
+  "fill-specializations" : [
+    {
+      "value" : "automatic"
+    },
+    {
+      "appearance" : "dark",
+      "value" : "system-dark"
     }
-  },
+  ],
   "groups" : [
     {
       "layers" : [
         {
-          "blend-mode" : "darken",
-          "image-name" : "cross.svg",
-          "name" : "cross",
+          "fill-specializations" : [
+            {
+              "appearance" : "dark",
+              "value" : "none"
+            }
+          ],
+          "glass" : true,
+          "hidden" : false,
+          "image-name-specializations" : [
+            {
+              "value" : "right.svg"
+            },
+            {
+              "appearance" : "light",
+              "value" : "right light.svg"
+            }
+          ],
+          "name" : "Right",
+          "position" : {
+            "scale" : 0.84,
+            "translation-in-points" : [
+              -2.5480724276847013,
+              -57.13258986803794
+            ]
+          }
+        },
+        {
+          "blend-mode" : "normal",
+          "glass" : true,
+          "image-name-specializations" : [
+            {
+              "value" : "cross.svg"
+            },
+            {
+              "appearance" : "light",
+              "value" : "cross light.svg"
+            }
+          ],
+          "name" : "Cross",
           "position" : {
             "scale" : 0.84,
             "translation-in-points" : [
@@ -31,26 +60,23 @@
           }
         },
         {
-          "blend-mode" : "darken",
-          "image-name" : "left.svg",
-          "name" : "left",
+          "blend-mode" : "normal",
+          "glass" : true,
+          "image-name-specializations" : [
+            {
+              "value" : "left.svg"
+            },
+            {
+              "appearance" : "light",
+              "value" : "left light.svg"
+            }
+          ],
+          "name" : "Left",
           "position" : {
             "scale" : 0.84,
             "translation-in-points" : [
               -3.574658482384052,
               -59.0859375
-            ]
-          }
-        },
-        {
-          "blend-mode" : "darken",
-          "image-name" : "right.svg",
-          "name" : "right",
-          "position" : {
-            "scale" : 0.84,
-            "translation-in-points" : [
-              -3.574658482384052,
-              -57.0859375
             ]
           }
         }

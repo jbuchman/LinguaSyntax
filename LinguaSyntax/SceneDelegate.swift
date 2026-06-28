@@ -34,6 +34,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func sceneDidBecomeActive(_ scene: UIScene) {
         // Called when the scene has moved from an inactive state to an active state.
         // Use this method to restart any tasks that were paused (or not yet started) when the scene was inactive.
+        importPendingSharedText()
     }
 
     func sceneWillResignActive(_ scene: UIScene) {
@@ -44,6 +45,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func sceneWillEnterForeground(_ scene: UIScene) {
         // Called as the scene transitions from the background to the foreground.
         // Use this method to undo the changes made on entering the background.
+        importPendingSharedText()
     }
 
     func sceneDidEnterBackground(_ scene: UIScene) {
@@ -53,11 +55,23 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
 
     private func importText(from urlContexts: Set<UIOpenURLContext>) {
-        guard let text = urlContexts.compactMap({ Self.importedText(from: $0.url) }).first else {
+        guard urlContexts.contains(where: { Self.isImportURL($0.url) }) else {
             return
         }
 
-        TextImporter.importText(text)
+        if let text = urlContexts.compactMap({ Self.importedText(from: $0.url) }).first {
+            TextImporter.importText(text)
+            rootViewController()?.settings.text = text
+        } else {
+            importPendingSharedText()
+        }
+    }
+
+    private func importPendingSharedText() {
+        guard let text = TextImporter.importPendingSharedText() else {
+            return
+        }
+
         rootViewController()?.settings.text = text
     }
 
@@ -87,8 +101,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
 
     static func importedText(from url: URL) -> String? {
-        guard url.scheme == Constants.importURLScheme,
-              url.host == Constants.importURLHost,
+        guard isImportURL(url),
               let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
               let text = components.queryItems?.first(where: { $0.name == Constants.importTextQueryItem })?.value,
               !text.isEmpty else {
@@ -96,6 +109,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         }
 
         return text
+    }
+
+    static func isImportURL(_ url: URL) -> Bool {
+        url.scheme == Constants.importURLScheme && url.host == Constants.importURLHost
     }
 
 }

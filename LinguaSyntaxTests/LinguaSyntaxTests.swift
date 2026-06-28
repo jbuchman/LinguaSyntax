@@ -193,6 +193,39 @@ struct ShareImportTests {
 
         #expect(SceneDelegate.importedText(from: url) == nil)
     }
+
+    @Test func pendingImportURLIsRecognizedWithoutInlineText() throws {
+        var components = URLComponents()
+        components.scheme = Constants.importURLScheme
+        components.host = Constants.importURLHost
+
+        let url = try #require(components.url)
+
+        #expect(SceneDelegate.isImportURL(url))
+        #expect(SceneDelegate.importedText(from: url) == nil)
+    }
+
+    @Test func importsPendingSharedTextFromFile() throws {
+        let fileURL = try #require(TextImporter.pendingSharedTextFileURL())
+        try "Pending file text".write(to: fileURL, atomically: true, encoding: .utf8)
+
+        let importedText = TextImporter.importPendingSharedText()
+
+        #expect(importedText == "Pending file text")
+        #expect(UserDefaults.standard.string(forKey: Constants.textKey) == "Pending file text")
+        #expect(!FileManager.default.fileExists(atPath: fileURL.path))
+    }
+
+    @Test func importsPendingSharedText() throws {
+        let sharedDefaults = try #require(UserDefaults(suiteName: Constants.appGroupIdentifier))
+        sharedDefaults.set("Pending shared text", forKey: Constants.pendingSharedTextKey)
+
+        let importedText = TextImporter.importPendingSharedText()
+
+        #expect(importedText == "Pending shared text")
+        #expect(UserDefaults.standard.string(forKey: Constants.textKey) == "Pending shared text")
+        #expect(sharedDefaults.string(forKey: Constants.pendingSharedTextKey) == nil)
+    }
 }
 
 private final class ChangeCountingDelegate: NSObject, UITextViewDelegate {

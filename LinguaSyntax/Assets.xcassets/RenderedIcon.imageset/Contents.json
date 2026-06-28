@@ -6,7 +6,51 @@
       "scale" : "1x"
     },
     {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "light"
+        }
+      ],
+      "filename" : "Icon-iOS-Default-512x512@1x 1.png",
+      "idiom" : "iphone",
+      "scale" : "1x"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "Icon-iOS-Dark-512x512@1x.png",
+      "idiom" : "iphone",
+      "scale" : "1x"
+    },
+    {
       "filename" : "Icon-iOS-Default-512x512@2x.png",
+      "idiom" : "iphone",
+      "scale" : "2x"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "light"
+        }
+      ],
+      "filename" : "Icon-iOS-Default-512x512@2x 1.png",
+      "idiom" : "iphone",
+      "scale" : "2x"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "Icon-iOS-Dark-512x512@2x.png",
       "idiom" : "iphone",
       "scale" : "2x"
     },
@@ -16,12 +60,78 @@
       "scale" : "3x"
     },
     {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "light"
+        }
+      ],
+      "filename" : "Icon-iOS-Default-512x512@3x 1.png",
+      "idiom" : "iphone",
+      "scale" : "3x"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "Icon-iOS-Dark-512x512@3x.png",
+      "idiom" : "iphone",
+      "scale" : "3x"
+    },
+    {
       "filename" : "Icon-iOS-Default-1024x1024@1x.png",
       "idiom" : "ipad",
       "scale" : "1x"
     },
     {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "light"
+        }
+      ],
+      "filename" : "Icon-iOS-Default-1024x1024@1x 1.png",
+      "idiom" : "ipad",
+      "scale" : "1x"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "Icon-iOS-Dark-1024x1024@1x.png",
+      "idiom" : "ipad",
+      "scale" : "1x"
+    },
+    {
       "filename" : "Icon-iOS-Default-1024x1024@2x.png",
+      "idiom" : "ipad",
+      "scale" : "2x"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "light"
+        }
+      ],
+      "filename" : "Icon-iOS-Default-1024x1024@2x 1.png",
+      "idiom" : "ipad",
+      "scale" : "2x"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "Icon-iOS-Dark-1024x1024@2x.png",
       "idiom" : "ipad",
       "scale" : "2x"
     }

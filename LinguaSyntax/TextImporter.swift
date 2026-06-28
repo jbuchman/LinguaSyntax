@@ -24,4 +24,39 @@ enum TextImporter {
             userInfo: [importedTextUserInfoKey: text]
         )
     }
+
+    @discardableResult
+    static func importPendingSharedText() -> String? {
+        if let text = pendingSharedTextFromFile() {
+            importText(text)
+            return text
+        }
+
+        guard let sharedDefaults = UserDefaults(suiteName: Constants.appGroupIdentifier),
+              let text = sharedDefaults.string(forKey: Constants.pendingSharedTextKey),
+              !text.isEmpty else {
+            return nil
+        }
+
+        sharedDefaults.removeObject(forKey: Constants.pendingSharedTextKey)
+        importText(text)
+        return text
+    }
+
+    static func pendingSharedTextFileURL() -> URL? {
+        FileManager.default
+            .containerURL(forSecurityApplicationGroupIdentifier: Constants.appGroupIdentifier)?
+            .appendingPathComponent(Constants.pendingSharedTextFileName)
+    }
+
+    private static func pendingSharedTextFromFile() -> String? {
+        guard let fileURL = pendingSharedTextFileURL(),
+              let text = try? String(contentsOf: fileURL, encoding: .utf8),
+              !text.isEmpty else {
+            return nil
+        }
+
+        try? FileManager.default.removeItem(at: fileURL)
+        return text
+    }
 }

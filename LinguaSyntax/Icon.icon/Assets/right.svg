@@ -22,22 +22,18 @@
      inkscape:pageopacity="0.0"
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
-     inkscape:zoom="0.4247931"
-     inkscape:cx="506.12875"
-     inkscape:cy="601.46928"
-     inkscape:window-width="1509"
-     inkscape:window-height="972"
+     inkscape:zoom="1.4841695"
+     inkscape:cx="523.86199"
+     inkscape:cy="227.3999"
+     inkscape:window-width="1496"
+     inkscape:window-height="910"
      inkscape:window-x="0"
-     inkscape:window-y="33"
+     inkscape:window-y="336"
      inkscape:window-maximized="0"
      inkscape:current-layer="svg1" />
-  <rect
-     style="fill:#13ff45;fill-opacity:1;stroke-width:1.14345"
+  <path
      id="rect1-3"
-     width="192.52722"
-     height="937.54181"
-     x="-474.25146"
-     y="296.26959"
-     ry="97.547684"
+     style="fill:#13ff45;fill-opacity:1;stroke-width:1.14345"
+     d="M -474.25208 395.10692 C -472.35005 421.65776 -459.19217 447.59575 -435.78078 465.66371 L -281.72457 584.55826 L -281.72443 1136.2628 C -281.72443 1190.3042 -324.65715 1233.8111 -377.98719 1233.8111 C -431.31723 1233.8111 -474.25094 1190.3055 -474.25094 1136.2641 L -474.25208 395.10692 z "
      transform="matrix(-0.90330183,0.4290056,0.44652124,0.89477303,0,0)" />
 </svg>

@@ -135,9 +135,11 @@ class ViewController: UIViewController {
 
     private func keyboardFrameWillChange(_ notification: Notification) {
         keyboardOverlapHeight = keyboardOverlap(from: notification)
+        let isKeyboardVisible = keyboardOverlapHeight > 0
+        counterViewController?.setKeyboardDismissButtonVisible(isKeyboardVisible)
         configureCounterSheet(
             animated: true,
-            selectedDetentIdentifier: keyboardOverlapHeight > 0 ? Constants.minimizedIdentifier : nil
+            selectedDetentIdentifier: isKeyboardVisible ? Constants.minimizedIdentifier : nil
         )
     }
 

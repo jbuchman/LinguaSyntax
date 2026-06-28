@@ -16,12 +16,16 @@ class CounterViewController: UIViewController {
     @IBOutlet weak var moreButton: MoreMenuButton!
     @IBOutlet weak var counterSpacerView: UIView!
     @IBOutlet weak var moreButtonContainerView: UIView!
+    private lazy var keyboardDismissButtonContainerView = makeKeyboardDismissButtonContainerView()
+    private lazy var keyboardDismissButton = makeKeyboardDismissButton()
     let settings: Settings
     weak var sourceTextView: TextView?
     var cancellables: Set<AnyCancellable> = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        configureKeyboardDismissButton()
 
         settings.$theme.receive(on: DispatchQueue.main).sink(receiveValue: { [weak self] theme in
             guard let self else {
@@ -54,6 +58,57 @@ class CounterViewController: UIViewController {
     
     @IBAction private func resetFocus() {
         sourceTextView?.resignFirstResponder()
+    }
+
+    func setKeyboardDismissButtonVisible(_ isVisible: Bool) {
+        keyboardDismissButtonContainerView.isHidden = !isVisible
+    }
+
+    private func configureKeyboardDismissButton() {
+        guard let stackView = counterSpacerView.superview as? UIStackView,
+              keyboardDismissButtonContainerView.superview == nil else {
+            return
+        }
+
+        keyboardDismissButtonContainerView.addSubview(keyboardDismissButton)
+        NSLayoutConstraint.activate([
+            keyboardDismissButton.centerXAnchor.constraint(equalTo: keyboardDismissButtonContainerView.centerXAnchor),
+            keyboardDismissButton.centerYAnchor.constraint(equalTo: keyboardDismissButtonContainerView.centerYAnchor),
+            keyboardDismissButton.widthAnchor.constraint(equalToConstant: 44),
+            keyboardDismissButton.heightAnchor.constraint(equalToConstant: 44),
+            keyboardDismissButtonContainerView.widthAnchor.constraint(equalToConstant: 44)
+        ])
+
+        keyboardDismissButtonContainerView.isHidden = true
+        stackView.insertArrangedSubview(keyboardDismissButtonContainerView, at: 0)
+    }
+
+    private func makeKeyboardDismissButtonContainerView() -> UIView {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.setContentHuggingPriority(.required, for: .horizontal)
+        view.setContentCompressionResistancePriority(.required, for: .horizontal)
+        return view
+    }
+
+    private func makeKeyboardDismissButton() -> UIButton {
+        var configuration: UIButton.Configuration
+        if #available(iOS 26.0, *) {
+            configuration = UIButton.Configuration.prominentClearGlass()
+            configuration.image = UIImage(systemName: "keyboard.chevron.compact.down")
+        } else {
+            configuration = UIButton.Configuration.plain()
+            configuration.baseForegroundColor = .secondaryLabel
+
+            configuration.image = UIImage(systemName: "keyboard.chevron.compact.down")
+        }
+
+        let button = UIButton(configuration: configuration, primaryAction: UIAction { [weak self] _ in
+            self?.resetFocus()
+        })
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.accessibilityLabel = String(localized: "Dismiss Keyboard")
+        return button
     }
     
     private func contentUpdate(text: String? = nil, theme: Theme? = nil) {
@@ -150,6 +205,7 @@ class CounterViewController: UIViewController {
             guard let self else { return }
             let shouldHidePartsOfSpeech = isMinimized ?? (sheetPresentationController?.selectedDetentIdentifier == Constants.minimizedIdentifier)
             view.backgroundColor = theme.secondaryBackground(traitCollection: traitCollection)
+            keyboardDismissButton.tintColor = .secondaryLabel
             partsOfSpeechTextView.isHidden = shouldHidePartsOfSpeech
         }
 

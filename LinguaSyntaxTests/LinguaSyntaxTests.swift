@@ -5,9 +5,11 @@
 //  Created by Jeremy Buchman on 6/24/26.
 //
 
+import AppIntents
 import NaturalLanguage
 import Testing
 import UIKit
+import UniformTypeIdentifiers
 @testable import LinguaSyntax
 
 @MainActor
@@ -195,6 +197,55 @@ struct ThemeTests {
         #expect(theme.backgroundColor == Theme.blueprint.backgroundColor)
         #expect(theme.foregroundColor(for: .verb) == Theme.blueprint.foregroundColor(for: .verb))
         #expect(theme.foregroundColor(for: .noun) == Theme.blueprint.foregroundColor(for: .noun))
+    }
+}
+
+@MainActor
+struct ShortcutTests {
+    @Test func exportRTFIntentCreatesStyledRTFDataFromInputText() throws {
+        let data = try ExportRTFIntent.rtfData(for: "Shortcut text", theme: .blueprint)
+        let exportedText = try NSAttributedString(
+            data: data,
+            options: [.documentType: NSAttributedString.DocumentType.rtf],
+            documentAttributes: nil
+        )
+        let backgroundColor = exportedText.attribute(.backgroundColor, at: 0, effectiveRange: nil) as? UIColor
+
+        #expect(exportedText.string == "Shortcut text")
+        #expect(backgroundColor?.hasSameRGBAComponents(as: Theme.blueprint.backgroundColor) == true)
+    }
+
+    @Test func exportPartsOfSpeechIntentCreatesTextFile() throws {
+        let file = try ExportPartsOfSpeechIntent.outputFile(
+            for: "The quick fox jumps.",
+            outputFormat: .text,
+            theme: .blueprint
+        )
+        let text = String(data: file.data, encoding: .utf8)
+
+        #expect(file.filename == "LinguaSyntax Parts of Speech.txt")
+        #expect(file.type == .plainText)
+        #expect(text?.isEmpty == false)
+        #expect(text?.contains(":") == true)
+    }
+
+    @Test func exportPartsOfSpeechIntentCreatesStyledRTFFile() throws {
+        let file = try ExportPartsOfSpeechIntent.outputFile(
+            for: "The quick fox jumps.",
+            outputFormat: .rtf,
+            theme: .blueprint
+        )
+        let exportedText = try NSAttributedString(
+            data: file.data,
+            options: [.documentType: NSAttributedString.DocumentType.rtf],
+            documentAttributes: nil
+        )
+        let backgroundColor = exportedText.attribute(.backgroundColor, at: 0, effectiveRange: nil) as? UIColor
+
+        #expect(file.filename == "LinguaSyntax Parts of Speech.rtf")
+        #expect(file.type == .rtf)
+        #expect(exportedText.string.isEmpty == false)
+        #expect(backgroundColor?.hasSameRGBAComponents(as: Theme.blueprint.backgroundColor) == true)
     }
 }
 

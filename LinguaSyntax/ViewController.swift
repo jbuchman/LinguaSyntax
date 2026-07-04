@@ -144,7 +144,7 @@ class ViewController: UIViewController {
         counterViewController?.setKeyboardDismissButtonVisible(isKeyboardVisible)
         configureCounterSheet(
             animated: true,
-            selectedDetentIdentifier: isKeyboardVisible ? Constants.minimizedIdentifier : nil
+            selectedDetentIdentifier: Constants.minimizedIdentifier
         )
     }
 

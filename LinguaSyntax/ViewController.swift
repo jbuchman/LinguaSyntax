@@ -16,10 +16,14 @@ class ViewController: UIViewController {
         textView.textContainer.lineFragmentPadding = 0
     }}
     @IBOutlet weak var placeholderLabel: UILabel!
+    @IBOutlet weak var textViewBottomConstraint: NSLayoutConstraint!
     let settings = Settings()
     var cancellables: Set<AnyCancellable> = []
     private var keyboardOverlapHeight: CGFloat = 0
     private var isKeyboardVisible = false
+    private var textViewBaseContentInset: UIEdgeInsets?
+    private var textViewBaseBottomConstraintConstant: CGFloat?
+    private lazy var counterSheetSourceView = makeCounterSheetSourceView()
 
     lazy var counterViewController: CounterViewController? = {
         storyboard?.instantiateViewController(identifier: "counter") { coder in
@@ -30,6 +34,7 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        configureCounterSheetSourceView()
         navigationController?.navigationBar.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(resetFocus)))
         
         settings.$text.receive(on: DispatchQueue.main).sink(receiveValue: { [weak self] text in
@@ -78,7 +83,9 @@ class ViewController: UIViewController {
         
         configureCounterSheet(selectedDetentIdentifier: Constants.minimizedIdentifier)
 
-        present(counterViewController, animated: true)
+        present(counterViewController, animated: true) { [weak self] in
+            self?.updateTextViewLayoutForCounterOverlap()
+        }
     }
 
     override func viewWillTransition(to size: CGSize, with coordinator: any UIViewControllerTransitionCoordinator) {
@@ -89,7 +96,15 @@ class ViewController: UIViewController {
                 animated: true,
                 selectedDetentIdentifier: Constants.minimizedIdentifier
             )
+        } completion: { [weak self] _ in
+            self?.updateTextViewLayoutForCounterOverlap()
         }
+    }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+
+        updateTextViewLayoutForCounterOverlap()
     }
 
     override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
@@ -98,6 +113,26 @@ class ViewController: UIViewController {
     
     @objc func resetFocus() {
         textView.resignFirstResponder()
+    }
+
+    private func configureCounterSheetSourceView() {
+        view.addSubview(counterSheetSourceView)
+
+        NSLayoutConstraint.activate([
+            counterSheetSourceView.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
+            counterSheetSourceView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            counterSheetSourceView.widthAnchor.constraint(equalTo: view.safeAreaLayoutGuide.widthAnchor),
+            counterSheetSourceView.heightAnchor.constraint(equalToConstant: 1)
+        ])
+    }
+
+    private func makeCounterSheetSourceView() -> UIView {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = .clear
+        view.alpha = 0
+        view.isUserInteractionEnabled = false
+        return view
     }
     
     private func updateSyntaxHighlight(theme: Theme? = nil) {
@@ -214,6 +249,7 @@ class ViewController: UIViewController {
             sheet.invalidateDetents()
             sheet.largestUndimmedDetentIdentifier = .large
             sheet.prefersGrabberVisible = true
+            sheet.sourceView = self.counterSheetSourceView
             sheet.prefersEdgeAttachedInCompactHeight = true
             sheet.widthFollowsPreferredContentSizeWhenEdgeAttached = true
             if let selectedDetentIdentifier {
@@ -222,6 +258,7 @@ class ViewController: UIViewController {
                     self.counterViewController?.updateAppearance(isMinimized: selectedDetentIdentifier == Constants.minimizedIdentifier)
                 }
             }
+            self.updateTextViewLayoutForCounterOverlap()
         }
 
         if animated {
@@ -272,6 +309,119 @@ class ViewController: UIViewController {
 
     static func keyboardIsVisible(keyboardFrame: CGRect, screenBounds: CGRect) -> Bool {
         keyboardFrame.height > 0 && keyboardFrame.minY < screenBounds.maxY
+    }
+
+    private func updateTextViewLayoutForCounterOverlap() {
+        guard isViewLoaded,
+              textView != nil,
+              textViewBottomConstraint != nil else {
+            return
+        }
+
+        if textViewBaseContentInset == nil {
+            textViewBaseContentInset = textView.contentInset
+        }
+        if textViewBaseBottomConstraintConstant == nil {
+            textViewBaseBottomConstraintConstant = textViewBottomConstraint.constant
+        }
+
+        let baseBottomConstraintConstant = textViewBaseBottomConstraintConstant ?? 0
+        let counterFrame = counterFrameInView()
+        let bottomConstraintConstant = Self.textViewBottomConstraintConstant(
+            baseConstant: baseBottomConstraintConstant,
+            safeAreaFrame: view.safeAreaLayoutGuide.layoutFrame,
+            counterFrame: counterFrame,
+            clearance: Constants.counterSheetTextViewClearance
+        )
+
+        if textViewBottomConstraint.constant != bottomConstraintConstant {
+            textViewBottomConstraint.constant = bottomConstraintConstant
+            view.layoutIfNeeded()
+        }
+
+        var contentInset = textViewBaseContentInset ?? .zero
+        contentInset.bottom = Self.counterOverlapHeight(
+            textViewFrame: textView.frame,
+            counterFrame: counterFrame
+        )
+
+        guard textView.contentInset != contentInset else {
+            return
+        }
+
+        textView.contentInset = contentInset
+        textView.scrollIndicatorInsets = contentInset
+    }
+
+    private func counterFrameInView() -> CGRect {
+        let minimizedFrame = minimizedCounterFrameInView()
+
+        if let presentationController = counterViewController?.presentationController,
+           let containerView = presentationController.containerView {
+            let presentedFrame = view.convert(presentationController.frameOfPresentedViewInContainerView, from: containerView)
+            guard let minimizedFrame else {
+                return presentedFrame
+            }
+
+            return presentedFrame.isNull || presentedFrame.minY > minimizedFrame.minY
+                ? minimizedFrame
+                : presentedFrame
+        }
+
+        guard let counterView = counterViewController?.viewIfLoaded,
+              counterView.window != nil else {
+            return minimizedFrame ?? .null
+        }
+
+        let counterFrame = view.convert(counterView.bounds, from: counterView)
+        guard let minimizedFrame else {
+            return counterFrame
+        }
+
+        return counterFrame.isNull || counterFrame.minY > minimizedFrame.minY
+            ? minimizedFrame
+            : counterFrame
+    }
+
+    private func minimizedCounterFrameInView() -> CGRect? {
+        guard counterViewController?.sheetPresentationController?.selectedDetentIdentifier == Constants.minimizedIdentifier else {
+            return nil
+        }
+
+        let safeAreaFrame = view.safeAreaLayoutGuide.layoutFrame
+        let visibleHeight = isKeyboardVisible
+            ? Constants.keyboardMinimizedDetentVisibleHeight
+            : Constants.minimizedDetentHeight
+        let height = visibleHeight + keyboardOverlapHeight
+        return CGRect(
+            x: safeAreaFrame.minX,
+            y: safeAreaFrame.maxY - height,
+            width: safeAreaFrame.width,
+            height: height
+        )
+    }
+
+    static func counterOverlapHeight(textViewFrame: CGRect, counterFrame: CGRect) -> CGFloat {
+        let intersection = textViewFrame.intersection(counterFrame)
+        guard !intersection.isNull else {
+            return 0
+        }
+
+        return intersection.height
+    }
+
+    static func textViewBottomConstraintConstant(
+        baseConstant: CGFloat,
+        safeAreaFrame: CGRect,
+        counterFrame: CGRect,
+        clearance: CGFloat = 0
+    ) -> CGFloat {
+        guard !counterFrame.isNull,
+              counterFrame.minY < safeAreaFrame.maxY else {
+            return baseConstant
+        }
+
+        return max(baseConstant, safeAreaFrame.maxY - counterFrame.minY + clearance)
     }
 
     private func minimizedDetent() -> UISheetPresentationController.Detent {
@@ -359,5 +509,9 @@ extension ViewController: UIAdaptivePresentationControllerDelegate, UISheetPrese
     // Triggers automatically the exact instant the sheet successfully settles into a detent position
     func sheetPresentationControllerDidChangeSelectedDetentIdentifier(_ sheetPresentationController: UISheetPresentationController) {
         counterViewController?.updateAppearance()
+        updateTextViewLayoutForCounterOverlap()
+        DispatchQueue.main.async { [weak self] in
+            self?.updateTextViewLayoutForCounterOverlap()
+        }
     }
 }

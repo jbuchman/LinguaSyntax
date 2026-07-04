@@ -320,6 +320,55 @@ struct CounterSheetDetentTests {
         ))
     }
 
+    @Test func counterOverlapHeightUsesIntersectingHeight() {
+        let overlapHeight = ViewController.counterOverlapHeight(
+            textViewFrame: CGRect(x: 16, y: 100, width: 300, height: 600),
+            counterFrame: CGRect(x: 0, y: 500, width: 400, height: 300)
+        )
+
+        #expect(overlapHeight == 200)
+    }
+
+    @Test func counterOverlapHeightIsZeroWhenCounterDoesNotCoverTextView() {
+        let overlapHeight = ViewController.counterOverlapHeight(
+            textViewFrame: CGRect(x: 16, y: 100, width: 300, height: 300),
+            counterFrame: CGRect(x: 0, y: 500, width: 400, height: 200)
+        )
+
+        #expect(overlapHeight == 0)
+    }
+
+    @Test func textViewBottomConstraintMovesAboveOverlappingCounter() {
+        let constant = ViewController.textViewBottomConstraintConstant(
+            baseConstant: 16,
+            safeAreaFrame: CGRect(x: 0, y: 100, width: 400, height: 700),
+            counterFrame: CGRect(x: 0, y: 500, width: 400, height: 300)
+        )
+
+        #expect(constant == 300)
+    }
+
+    @Test func textViewBottomConstraintIncludesClearanceAboveCounter() {
+        let constant = ViewController.textViewBottomConstraintConstant(
+            baseConstant: 16,
+            safeAreaFrame: CGRect(x: 0, y: 100, width: 400, height: 700),
+            counterFrame: CGRect(x: 0, y: 500, width: 400, height: 300),
+            clearance: 12
+        )
+
+        #expect(constant == 312)
+    }
+
+    @Test func textViewBottomConstraintUsesBaseConstantWhenCounterIsBelowSafeArea() {
+        let constant = ViewController.textViewBottomConstraintConstant(
+            baseConstant: 16,
+            safeAreaFrame: CGRect(x: 0, y: 100, width: 400, height: 700),
+            counterFrame: CGRect(x: 0, y: 820, width: 400, height: 100)
+        )
+
+        #expect(constant == 16)
+    }
+
     @Test func keyboardHalfDetentUsesHalfOfAvailableHeightAboveKeyboard() {
         let height = ViewController.keyboardTextViewHalfDetentHeight(
             viewHeight: 800,

@@ -13,6 +13,7 @@ enum Constants {
     static let compactTextViewHalfIdentifier = UISheetPresentationController.Detent.Identifier("compactTextViewHalf")
     static let minimizedDetentHeight: CGFloat = 70
     static let keyboardMinimizedDetentVisibleHeight: CGFloat = 40
+    static let counterSheetTextViewClearance: CGFloat = 12
     static let themeKey = "theme"
     static let customThemeKey = "customTheme"
     static let textKey = "text"

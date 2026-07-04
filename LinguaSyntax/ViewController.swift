@@ -107,6 +107,17 @@ class ViewController: UIViewController {
         updateTextViewLayoutForCounterOverlap()
     }
 
+    func windowSceneGeometryDidUpdate() {
+        view.layoutIfNeeded()
+        configureCounterSheet(selectedDetentIdentifier: Constants.minimizedIdentifier)
+        updateTextViewLayoutForCounterOverlap()
+
+        DispatchQueue.main.async { [weak self] in
+            self?.configureCounterSheet(selectedDetentIdentifier: Constants.minimizedIdentifier)
+            self?.updateTextViewLayoutForCounterOverlap()
+        }
+    }
+
     override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
         textView.canPerformAction(action, withSender: sender)
     }

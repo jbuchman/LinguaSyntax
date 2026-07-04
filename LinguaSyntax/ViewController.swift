@@ -68,6 +68,10 @@ class ViewController: UIViewController {
         
         // 1. Configure the View Controller layout parameters PRIOR to presentation
         counterViewController.modalPresentationStyle = .pageSheet
+        counterViewController.preferredContentSize = CGSize(
+            width: Self.preferredCounterSheetWidth(containerWidth: view.bounds.width),
+            height: 0
+        )
         counterViewController.isModalInPresentation = true // CRITICAL FIX: Blocks pull-down dismiss gestures!
         
         configureCounterSheet()
@@ -164,10 +168,16 @@ class ViewController: UIViewController {
         }
 
         let updateSheet = {
+            self.counterViewController?.preferredContentSize = CGSize(
+                width: Self.preferredCounterSheetWidth(containerWidth: self.view.bounds.width),
+                height: 0
+            )
             sheet.delegate = self
             sheet.detents = self.counterSheetDetents()
             sheet.largestUndimmedDetentIdentifier = .large
             sheet.prefersGrabberVisible = true
+            sheet.prefersEdgeAttachedInCompactHeight = true
+            sheet.widthFollowsPreferredContentSizeWhenEdgeAttached = true
             if let selectedDetentIdentifier {
                 sheet.selectedDetentIdentifier = selectedDetentIdentifier
                 self.counterViewController?.updateAppearance(isMinimized: selectedDetentIdentifier == Constants.minimizedIdentifier)
@@ -182,12 +192,17 @@ class ViewController: UIViewController {
     }
 
     private func counterSheetDetents() -> [UISheetPresentationController.Detent] {
-        Self.counterSheetDetentIdentifiers(isKeyboardVisible: keyboardOverlapHeight > 0).map { identifier in
+        Self.counterSheetDetentIdentifiers(
+            isKeyboardVisible: keyboardOverlapHeight > 0,
+            isCompactHeight: traitCollection.verticalSizeClass == .compact
+        ).map { identifier in
             switch identifier {
             case Constants.minimizedIdentifier:
                 return minimizedDetent()
             case Constants.keyboardTextViewHalfIdentifier:
                 return keyboardTextViewHalfDetent()
+            case Constants.compactTextViewHalfIdentifier:
+                return compactTextViewHalfDetent()
             case .medium:
                 return .medium()
             default:
@@ -196,12 +211,23 @@ class ViewController: UIViewController {
         }
     }
 
-    static func counterSheetDetentIdentifiers(isKeyboardVisible: Bool) -> [UISheetPresentationController.Detent.Identifier] {
+    static func counterSheetDetentIdentifiers(
+        isKeyboardVisible: Bool,
+        isCompactHeight: Bool = false
+    ) -> [UISheetPresentationController.Detent.Identifier] {
         if isKeyboardVisible {
             return [Constants.minimizedIdentifier, Constants.keyboardTextViewHalfIdentifier, .large]
         }
 
+        if isCompactHeight {
+            return [Constants.minimizedIdentifier, Constants.compactTextViewHalfIdentifier, .large]
+        }
+
         return [Constants.minimizedIdentifier, .medium, .large]
+    }
+
+    static func preferredCounterSheetWidth(containerWidth: CGFloat) -> CGFloat {
+        min(max(containerWidth * 0.6, 360), 480)
     }
 
     private func minimizedDetent() -> UISheetPresentationController.Detent {
@@ -226,6 +252,16 @@ class ViewController: UIViewController {
                 maximumDetentValue: context.maximumDetentValue
             )
         }
+    }
+
+    private func compactTextViewHalfDetent() -> UISheetPresentationController.Detent {
+        UISheetPresentationController.Detent.custom(identifier: Constants.compactTextViewHalfIdentifier) { context in
+            Self.compactTextViewHalfDetentHeight(maximumDetentValue: context.maximumDetentValue)
+        }
+    }
+
+    static func compactTextViewHalfDetentHeight(maximumDetentValue: CGFloat) -> CGFloat {
+        maximumDetentValue / 2
     }
 
     static func keyboardTextViewHalfDetentHeight(

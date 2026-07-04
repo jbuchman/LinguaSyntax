@@ -290,6 +290,22 @@ struct CounterSheetDetentTests {
         ])
     }
 
+    @Test func compactHeightDetentsUseCustomTextViewHalfDetent() {
+        #expect(ViewController.counterSheetDetentIdentifiers(isKeyboardVisible: false, isCompactHeight: true) == [
+            Constants.minimizedIdentifier,
+            Constants.compactTextViewHalfIdentifier,
+            .large
+        ])
+    }
+
+    @Test func preferredCounterSheetWidthUsesReadableLandscapeWidth() {
+        #expect(ViewController.preferredCounterSheetWidth(containerWidth: 844) == 480)
+    }
+
+    @Test func preferredCounterSheetWidthKeepsMinimumUsableWidth() {
+        #expect(ViewController.preferredCounterSheetWidth(containerWidth: 390) == 360)
+    }
+
     @Test func keyboardHalfDetentUsesHalfOfAvailableHeightAboveKeyboard() {
         let height = ViewController.keyboardTextViewHalfDetentHeight(
             viewHeight: 800,
@@ -298,6 +314,10 @@ struct CounterSheetDetentTests {
         )
 
         #expect(height == 550)
+    }
+
+    @Test func compactTextViewHalfDetentUsesHalfMaximumHeight() {
+        #expect(ViewController.compactTextViewHalfDetentHeight(maximumDetentValue: 360) == 180)
     }
 
     @Test func keyboardHalfDetentIsCappedToMaximumDetentValue() {

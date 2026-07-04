@@ -10,6 +10,7 @@ import UIKit
 enum Constants {
     static let minimizedIdentifier = UISheetPresentationController.Detent.Identifier("minimized")
     static let keyboardTextViewHalfIdentifier = UISheetPresentationController.Detent.Identifier("keyboardTextViewHalf")
+    static let compactTextViewHalfIdentifier = UISheetPresentationController.Detent.Identifier("compactTextViewHalf")
     static let minimizedDetentHeight: CGFloat = 70
     static let keyboardMinimizedDetentVisibleHeight: CGFloat = 40
     static let themeKey = "theme"

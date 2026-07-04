@@ -306,6 +306,20 @@ struct CounterSheetDetentTests {
         #expect(ViewController.preferredCounterSheetWidth(containerWidth: 390) == 360)
     }
 
+    @Test func keyboardFrameAboveScreenBottomIsVisible() {
+        #expect(ViewController.keyboardIsVisible(
+            keyboardFrame: CGRect(x: 0, y: 600, width: 1024, height: 300),
+            screenBounds: CGRect(x: 0, y: 0, width: 1024, height: 768)
+        ))
+    }
+
+    @Test func keyboardFrameAtScreenBottomIsHidden() {
+        #expect(!ViewController.keyboardIsVisible(
+            keyboardFrame: CGRect(x: 0, y: 768, width: 1024, height: 300),
+            screenBounds: CGRect(x: 0, y: 0, width: 1024, height: 768)
+        ))
+    }
+
     @Test func keyboardHalfDetentUsesHalfOfAvailableHeightAboveKeyboard() {
         let height = ViewController.keyboardTextViewHalfDetentHeight(
             viewHeight: 800,

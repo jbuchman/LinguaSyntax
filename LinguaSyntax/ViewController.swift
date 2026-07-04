@@ -19,6 +19,7 @@ class ViewController: UIViewController {
     let settings = Settings()
     var cancellables: Set<AnyCancellable> = []
     private var keyboardOverlapHeight: CGFloat = 0
+    private var isKeyboardVisible = false
 
     lazy var counterViewController: CounterViewController? = {
         storyboard?.instantiateViewController(identifier: "counter") { coder in
@@ -54,6 +55,7 @@ class ViewController: UIViewController {
 
         NotificationCenter.default.publisher(for: UIResponder.keyboardWillChangeFrameNotification)
             .merge(with: NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification))
+            .merge(with: NotificationCenter.default.publisher(for: UIResponder.keyboardDidHideNotification))
             .receive(on: DispatchQueue.main)
             .sink { [weak self] notification in
                 self?.keyboardFrameWillChange(notification)
@@ -74,9 +76,20 @@ class ViewController: UIViewController {
         )
         counterViewController.isModalInPresentation = true // CRITICAL FIX: Blocks pull-down dismiss gestures!
         
-        configureCounterSheet()
+        configureCounterSheet(selectedDetentIdentifier: Constants.minimizedIdentifier)
 
         present(counterViewController, animated: true)
+    }
+
+    override func viewWillTransition(to size: CGSize, with coordinator: any UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+
+        coordinator.animate { [weak self] _ in
+            self?.configureCounterSheet(
+                animated: true,
+                selectedDetentIdentifier: Constants.minimizedIdentifier
+            )
+        }
     }
 
     override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
@@ -140,23 +153,47 @@ class ViewController: UIViewController {
 
     private func keyboardFrameWillChange(_ notification: Notification) {
         keyboardOverlapHeight = keyboardOverlap(from: notification)
-        let isKeyboardVisible = keyboardOverlapHeight > 0
+        isKeyboardVisible = keyboardIsVisible(from: notification)
         counterViewController?.setKeyboardDismissButtonVisible(isKeyboardVisible)
         configureCounterSheet(
-            animated: true,
+            animated: notification.name != UIResponder.keyboardDidHideNotification,
             selectedDetentIdentifier: Constants.minimizedIdentifier
         )
     }
 
     private func keyboardOverlap(from notification: Notification) -> CGFloat {
         guard notification.name != UIResponder.keyboardWillHideNotification,
-              let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect,
-              let window = view.window else {
+              notification.name != UIResponder.keyboardDidHideNotification,
+              let keyboardFrameInView = keyboardFrameInView(from: notification) else {
             return 0
         }
 
-        let keyboardFrameInView = view.convert(keyboardFrame, from: window.screen.coordinateSpace)
-        return max(0, view.bounds.maxY - keyboardFrameInView.minY)
+        let intersection = view.bounds.intersection(keyboardFrameInView)
+        guard !intersection.isNull else {
+            return 0
+        }
+
+        return max(0, view.bounds.maxY - intersection.minY)
+    }
+
+    private func keyboardIsVisible(from notification: Notification) -> Bool {
+        guard notification.name != UIResponder.keyboardWillHideNotification,
+              notification.name != UIResponder.keyboardDidHideNotification,
+              let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else {
+            return false
+        }
+
+        let screenBounds = (notification.object as? UIScreen ?? view.window?.screen)?.bounds ?? UIScreen.main.bounds
+        return Self.keyboardIsVisible(keyboardFrame: keyboardFrame, screenBounds: screenBounds)
+    }
+
+    private func keyboardFrameInView(from notification: Notification) -> CGRect? {
+        guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect,
+              let coordinateSpace = (notification.object as? UIScreen ?? view.window?.screen)?.coordinateSpace else {
+            return nil
+        }
+
+        return coordinateSpace.convert(keyboardFrame, to: view)
     }
 
     private func configureCounterSheet(
@@ -174,13 +211,16 @@ class ViewController: UIViewController {
             )
             sheet.delegate = self
             sheet.detents = self.counterSheetDetents()
+            sheet.invalidateDetents()
             sheet.largestUndimmedDetentIdentifier = .large
             sheet.prefersGrabberVisible = true
             sheet.prefersEdgeAttachedInCompactHeight = true
             sheet.widthFollowsPreferredContentSizeWhenEdgeAttached = true
             if let selectedDetentIdentifier {
                 sheet.selectedDetentIdentifier = selectedDetentIdentifier
-                self.counterViewController?.updateAppearance(isMinimized: selectedDetentIdentifier == Constants.minimizedIdentifier)
+                if self.counterViewController?.isViewLoaded == true {
+                    self.counterViewController?.updateAppearance(isMinimized: selectedDetentIdentifier == Constants.minimizedIdentifier)
+                }
             }
         }
 
@@ -193,7 +233,7 @@ class ViewController: UIViewController {
 
     private func counterSheetDetents() -> [UISheetPresentationController.Detent] {
         Self.counterSheetDetentIdentifiers(
-            isKeyboardVisible: keyboardOverlapHeight > 0,
+            isKeyboardVisible: isKeyboardVisible,
             isCompactHeight: traitCollection.verticalSizeClass == .compact
         ).map { identifier in
             switch identifier {
@@ -230,10 +270,17 @@ class ViewController: UIViewController {
         min(max(containerWidth * 0.6, 360), 480)
     }
 
+    static func keyboardIsVisible(keyboardFrame: CGRect, screenBounds: CGRect) -> Bool {
+        keyboardFrame.height > 0 && keyboardFrame.minY < screenBounds.maxY
+    }
+
     private func minimizedDetent() -> UISheetPresentationController.Detent {
         UISheetPresentationController.Detent.custom(identifier: Constants.minimizedIdentifier) { [weak self] _ in
-            let keyboardOverlapHeight = self?.keyboardOverlapHeight ?? 0
-            let visibleHeight = keyboardOverlapHeight > 0
+            guard let self else {
+                return Constants.minimizedDetentHeight
+            }
+
+            let visibleHeight = isKeyboardVisible
                 ? Constants.keyboardMinimizedDetentVisibleHeight
                 : Constants.minimizedDetentHeight
             return visibleHeight + keyboardOverlapHeight

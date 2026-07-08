@@ -22,27 +22,23 @@ class ShareViewController: SLComposeServiceViewController {
     }
 
     override func didSelectPost() {
-        loadSharedText { [weak self] text in
-            guard let self else { return }
+        Task {
+            let text = await loadSharedText()
+            
             guard let text else {
                 presentImportFailure(message: String(localized: "LinguaSyntax could not find text to import."))
                 return
             }
-
+            
             guard Self.savePendingSharedText(text), let importURL = Self.importURL() else {
                 presentImportFailure(message: String(localized: "LinguaSyntax could not save text for import. Make sure the app and share extension both have the LinguaSyntax App Group enabled."))
                 return
             }
-
-            extensionContext?.open(importURL) { [weak self] didOpen in
-                DispatchQueue.main.async {
-                    guard let self else { return }
-                    if didOpen || self.openURLThroughResponderChain(importURL) {
-                        self.extensionContext?.completeRequest(returningItems: [], completionHandler: nil)
-                    } else {
-                        self.presentImportFailure(message: String(localized: "LinguaSyntax could not open the app to import this text."))
-                    }
-                }
+                        
+            if let extensionContext, await extensionContext.open(importURL) || self.openURLThroughResponderChain(importURL) {
+                self.extensionContext?.completeRequest(returningItems: [], completionHandler: nil)
+            } else {
+                self.presentImportFailure(message: String(localized: "LinguaSyntax could not open the app to import this text."))
             }
         }
     }
@@ -51,7 +47,7 @@ class ShareViewController: SLComposeServiceViewController {
         []
     }
 
-    private func loadSharedText(completion: @escaping (String?) -> Void) {
+    private func loadSharedText() async -> String? {
         var textFragments = [String]()
         if !contentText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             textFragments.append(contentText)
@@ -62,30 +58,31 @@ class ShareViewController: SLComposeServiceViewController {
             .flatMap { $0.attachments ?? [] } ?? []
 
         guard !itemProviders.isEmpty else {
-            completion(joinedText(from: textFragments))
-            return
+            return joinedText(from: textFragments)
         }
-
-        let group = DispatchGroup()
-        let lock = NSLock()
-
+        
         for itemProvider in itemProviders {
             if let typeIdentifier = Self.supportedTypeIdentifier(for: itemProvider) {
-                group.enter()
-                itemProvider.loadItem(forTypeIdentifier: typeIdentifier, options: nil) { item, _ in
-                    if let text = Self.text(from: item) {
-                        lock.lock()
-                        textFragments.append(text)
-                        lock.unlock()
+                do {
+                    let string: String? = try await withCheckedThrowingContinuation { continuation in
+                        itemProvider.loadItem(forTypeIdentifier: typeIdentifier) { item, error in
+                            if let error {
+                                continuation.resume(throwing: error)
+                                return
+                            }
+                            continuation.resume(returning: item?.string)
+                        }
                     }
-                    group.leave()
+                    if let string {
+                        textFragments.append(string)
+                    }
+                } catch {
+                    print("Failed to load item provider for \(typeIdentifier): \(error)")
                 }
             }
         }
 
-        group.notify(queue: .main) {
-            completion(self.joinedText(from: textFragments))
-        }
+        return joinedText(from: textFragments)
     }
 
     private func joinedText(from textFragments: [String]) -> String? {
@@ -170,5 +167,22 @@ class ShareViewController: SLComposeServiceViewController {
         )
         alertController.addAction(UIAlertAction(title: String(localized: "OK"), style: .default))
         present(alertController, animated: true)
+    }
+}
+
+extension NSSecureCoding {
+    var string: String? {
+        switch self {
+        case let string as String:
+            return string
+        case let attributedString as NSAttributedString:
+            return attributedString.string
+        case let url as URL:
+            return url.absoluteString
+        case let data as Data:
+            return String(data: data, encoding: .utf8)
+        default:
+            return nil
+        }
     }
 }

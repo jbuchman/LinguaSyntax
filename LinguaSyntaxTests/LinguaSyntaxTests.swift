@@ -93,7 +93,7 @@ struct StringExtensionTests {
 
         #expect(!summaryText.contains(NLTag.punctuation.rawValue))
         #expect(!summaryText.contains(NLTag.whitespace.rawValue))
-        #expect(!summaryText.contains(NLTag.other.rawValue))
+        #expect(!summaryText.contains("\(NLTag.other.rawValue):"))
     }
 
     @Test(arguments: [
@@ -127,7 +127,7 @@ struct StringExtensionTests {
 
         #expect(!summaryText.contains(NLTag.punctuation.rawValue))
         #expect(!summaryText.contains(NLTag.whitespace.rawValue))
-        #expect(!summaryText.contains(NLTag.other.rawValue))
+        #expect(!summaryText.contains("\(NLTag.other.rawValue):"))
     }
 
     @Test func textInputLanguageCodeCreatesNaturalLanguageHint() throws {

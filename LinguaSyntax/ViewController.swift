@@ -23,6 +23,7 @@ class ViewController: UIViewController {
     private var isKeyboardVisible = false
     private var textViewBaseContentInset: UIEdgeInsets?
     private var textViewBaseBottomConstraintConstant: CGFloat?
+    private var requestedLexicalAssetLanguages = Set<NLLanguage>()
     private lazy var counterSheetSourceView = makeCounterSheetSourceView()
 
     lazy var counterViewController: CounterViewController? = {
@@ -177,24 +178,53 @@ class ViewController: UIViewController {
             return
         }
 
+        let language = textView.textInputMode?.naturalLanguageHint
+            ?? NLLanguageRecognizer.dominantLanguage(for: string)
+        requestLexicalAssetsIfNeeded(for: language)
+
         let fullRange = NSRange(location: 0, length: textView.textStorage.length)
         textView.textStorage.beginEditing()
         textView.textStorage.removeAttribute(.underlineStyle, range: fullRange)
         textView.textStorage.addAttributes(Theme.textAttributes(theme: theme), range: fullRange)
 
-        let tagger = NLTagger(tagSchemes: [.nameTypeOrLexicalClass])
+        let tagger = NLTagger(tagSchemes: [.lexicalClass])
         tagger.string = string
         tagger.setLanguageHint(textView.textInputMode?.naturalLanguageHint, for: string)
-        tagger.enumerateTags(in: string.startIndex..<string.endIndex, unit: .word, scheme: .nameTypeOrLexicalClass, options: String.syntaxTaggerOptions) { tag, tokenRange in
+        tagger.enumerateTags(in: string.startIndex..<string.endIndex, unit: .word, scheme: .lexicalClass, options: String.syntaxTaggerOptions) { tag, tokenRange in
             guard let tag else {
                 return true
             }
-
+            print(tag, tokenRange)
             textView.textStorage.addAttributes(tag.textAttributes(theme: theme), range: NSRange(tokenRange, in: string))
             return true
         }
 
         textView.textStorage.endEditing()
+    }
+
+    private func requestLexicalAssetsIfNeeded(for language: NLLanguage?) {
+        guard let language,
+              !NLTagger.availableTagSchemes(for: .word, language: language).contains(.lexicalClass),
+              requestedLexicalAssetLanguages.insert(language).inserted else {
+            return
+        }
+
+        Task { [weak self] in
+            guard let self else {
+                return
+            }
+
+            do {
+                let result = try await NLTagger.requestAssets(for: language, tagScheme: .lexicalClass)
+                if result == .available {
+                    self.updateSyntaxHighlight()
+                } else {
+                    self.requestedLexicalAssetLanguages.remove(language)
+                }
+            } catch {
+                self.requestedLexicalAssetLanguages.remove(language)
+            }
+        }
     }
 
     private func keyboardFrameWillChange(_ notification: Notification) {

@@ -26,13 +26,13 @@ extension String {
             return AttributedString(self)
         }
         
-        let tagger = NLTagger(tagSchemes: [.nameTypeOrLexicalClass])
+        let tagger = NLTagger(tagSchemes: [.lexicalClass])
         tagger.string = self
         tagger.setLanguageHint(languageHint, for: self)
         
         var attributedString = AttributedString()
         var currentIndex = startIndex
-        tagger.enumerateTags(in: self.startIndex..<self.endIndex, unit: .word, scheme: .nameTypeOrLexicalClass, options: options) { tag, tokenRange in
+        tagger.enumerateTags(in: self.startIndex..<self.endIndex, unit: .word, scheme: .lexicalClass, options: options) { tag, tokenRange in
             if currentIndex < tokenRange.lowerBound {
                 attributedString.append(AttributedString(self[currentIndex..<tokenRange.lowerBound]))
             }
@@ -72,11 +72,11 @@ extension String {
             return AttributedString()
         }
         
-        let tagger = NLTagger(tagSchemes: [.nameTypeOrLexicalClass])
+        let tagger = NLTagger(tagSchemes: [.lexicalClass])
         tagger.string = self
         tagger.setLanguageHint(languageHint, for: self)
         var tags = [NLTag: Int]()
-        tagger.enumerateTags(in: self.startIndex..<self.endIndex, unit: .word, scheme: .nameTypeOrLexicalClass, options: Self.syntaxTaggerOptions) { tag, tokenRange in
+        tagger.enumerateTags(in: self.startIndex..<self.endIndex, unit: .word, scheme: .lexicalClass, options: Self.syntaxTaggerOptions) { tag, tokenRange in
             guard let tag, tag != .other else {
                 return true
             }

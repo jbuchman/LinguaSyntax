@@ -220,7 +220,6 @@ class ViewController: UIViewController {
             guard let tag else {
                 return true
             }
-            print(tag, tokenRange)
             textView.textStorage.addAttributes(tag.textAttributes(theme: theme), range: NSRange(tokenRange, in: string))
             return true
         }

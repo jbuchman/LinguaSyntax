@@ -88,6 +88,15 @@ struct StringExtensionTests {
         #expect("Hello, world!".wordCount == 2)
     }
 
+    @Test func emptyTextHasNoWordsOrPartsOfSpeech() {
+        #expect("".wordCount == 0)
+        #expect("".partsOfSpeech(theme: .dark).characters.isEmpty)
+    }
+
+    @Test func syntaxHighlightingPreservesEmptyText() {
+        #expect("".highlightSyntax(theme: .dark).characters.isEmpty)
+    }
+
     @Test func partsOfSpeechOmitsPunctuationWhitespaceAndOtherTags() {
         let summaryText = String("Hello, world!").partsOfSpeech(theme: .dark).characters
 
@@ -229,6 +238,16 @@ struct ShortcutTests {
         #expect(text?.contains(":") == true)
     }
 
+    @Test func exportPartsOfSpeechIntentFallsBackToWordCountForEmptyText() throws {
+        let file = try ExportPartsOfSpeechIntent.outputFile(
+            for: "",
+            outputFormat: .text,
+            theme: .blueprint
+        )
+
+        #expect(String(data: file.data, encoding: .utf8) == "Words: 0")
+    }
+
     @Test func exportPartsOfSpeechIntentCreatesStyledRTFFile() throws {
         let file = try ExportPartsOfSpeechIntent.outputFile(
             for: "The quick fox jumps.",
@@ -245,6 +264,23 @@ struct ShortcutTests {
         #expect(file.filename == "LinguaSyntax Parts of Speech.rtf")
         #expect(file.type == .rtf)
         #expect(exportedText.string.isEmpty == false)
+        #expect(backgroundColor?.hasSameRGBAComponents(as: Theme.blueprint.backgroundColor) == true)
+    }
+
+    @Test func exportPartsOfSpeechIntentStylesRTFWordCountFallback() throws {
+        let file = try ExportPartsOfSpeechIntent.outputFile(
+            for: "",
+            outputFormat: .rtf,
+            theme: .blueprint
+        )
+        let exportedText = try NSAttributedString(
+            data: file.data,
+            options: [.documentType: NSAttributedString.DocumentType.rtf],
+            documentAttributes: nil
+        )
+        let backgroundColor = exportedText.attribute(.backgroundColor, at: 0, effectiveRange: nil) as? UIColor
+
+        #expect(exportedText.string == "Words: 0")
         #expect(backgroundColor?.hasSameRGBAComponents(as: Theme.blueprint.backgroundColor) == true)
     }
 }

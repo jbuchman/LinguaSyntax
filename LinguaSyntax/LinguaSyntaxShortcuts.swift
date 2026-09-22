@@ -103,17 +103,20 @@ struct ExportPartsOfSpeechIntent: AppIntent {
 
     @MainActor
     static func outputFile(for text: String, outputFormat: PartsOfSpeechOutputFormat, theme: Theme) throws -> IntentFile {
+        var summary = text.partsOfSpeech(theme: theme)
+        if summary.characters.isEmpty {
+            summary = AttributedString("Words: \(text.wordCount)")
+        }
+
         switch outputFormat {
         case .text:
-            let summary = String(text.partsOfSpeech(theme: theme).characters)
             return IntentFile(
-                data: Data(summary.utf8),
+                data: Data(String(summary.characters).utf8),
                 filename: "LinguaSyntax Parts of Speech.txt",
                 type: .plainText
             )
         case .rtf:
-            let summary = NSAttributedString(text.partsOfSpeech(theme: theme))
-            let data = try CounterViewController.rtfData(from: summary, theme: theme)
+            let data = try CounterViewController.rtfData(from: NSAttributedString(summary), theme: theme)
             return IntentFile(
                 data: data,
                 filename: "LinguaSyntax Parts of Speech.rtf",

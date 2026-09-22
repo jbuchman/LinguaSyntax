@@ -35,7 +35,7 @@
                         <constraints>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="cFo-mm-RhG" secondAttribute="trailing" constant="16" id="8kD-oL-nu6"/>
                             <constraint firstItem="cFo-mm-RhG" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="16" id="Ec0-Qp-yVj"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="Ita-5D-T2e" secondAttribute="bottom" constant="16" id="LTK-Cw-raa"/>
+                            <constraint firstItem="Ita-5D-T2e" firstAttribute="bottom" secondItem="6Tk-OE-BBY" secondAttribute="bottom" constant="-16" id="LTK-Cw-raa"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="Ita-5D-T2e" secondAttribute="trailing" constant="16" id="O2y-lI-qvW"/>
                             <constraint firstItem="Ita-5D-T2e" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="16" id="WIr-WC-ODd"/>
                             <constraint firstItem="Ita-5D-T2e" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="16" id="ZAk-cF-1OL"/>

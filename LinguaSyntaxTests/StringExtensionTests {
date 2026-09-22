@@ -1,0 +1,7 @@
+    @Test func partsOfSpeechOmitsPunctuationWhitespaceAndOtherTags() {
+        let summaryText = String("Hello, world!").partsOfSpeech(theme: .dark).string
+
+        #expect(!summaryText.contains(NLTag.punctuation.rawValue))
+        #expect(!summaryText.contains(NLTag.whitespace.rawValue))
+        #expect(!summaryText.contains(NLTag.other.rawValue))
+    }

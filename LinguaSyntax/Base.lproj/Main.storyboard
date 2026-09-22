@@ -44,9 +44,13 @@
                     </view>
                     <navigationItem key="navigationItem" title="LinguaSyntax" id="Fnt-RK-Mdi"/>
                     <connections>
+                        <outlet property="placeholderLeadingConstraint" destination="cyi-TW-yxE" id="J2W-Tp-pLC"/>
                         <outlet property="placeholderLabel" destination="cFo-mm-RhG" id="Wls-C7-Fv0"/>
+                        <outlet property="placeholderTrailingConstraint" destination="8kD-oL-nu6" id="kXR-j9-pTC"/>
                         <outlet property="textView" destination="Ita-5D-T2e" id="8cg-gM-P9Z"/>
                         <outlet property="textViewBottomConstraint" destination="LTK-Cw-raa" id="qjZ-kh-XKD"/>
+                        <outlet property="textViewLeadingConstraint" destination="ZAk-cF-1OL" id="oRj-iZ-tLC"/>
+                        <outlet property="textViewTrailingConstraint" destination="O2y-lI-qvW" id="fJn-Pn-tTC"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>

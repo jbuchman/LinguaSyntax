@@ -17,6 +17,10 @@ class ViewController: UIViewController {
     }}
     @IBOutlet weak var placeholderLabel: UILabel!
     @IBOutlet weak var textViewBottomConstraint: NSLayoutConstraint!
+    @IBOutlet weak var textViewLeadingConstraint: NSLayoutConstraint!
+    @IBOutlet weak var textViewTrailingConstraint: NSLayoutConstraint!
+    @IBOutlet weak var placeholderLeadingConstraint: NSLayoutConstraint!
+    @IBOutlet weak var placeholderTrailingConstraint: NSLayoutConstraint!
     let settings = Settings()
     var cancellables: Set<AnyCancellable> = []
     private var keyboardOverlapHeight: CGFloat = 0
@@ -34,6 +38,10 @@ class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        if #available(iOS 26.0, *) {
+            configureCornerAdaptedTextLayout()
+        }
         
         configureCounterSheetSourceView()
         navigationController?.navigationBar.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(resetFocus)))
@@ -135,6 +143,24 @@ class ViewController: UIViewController {
             counterSheetSourceView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             counterSheetSourceView.widthAnchor.constraint(equalTo: view.safeAreaLayoutGuide.widthAnchor),
             counterSheetSourceView.heightAnchor.constraint(equalToConstant: 1)
+        ])
+    }
+
+    @available(iOS 26.0, *)
+    private func configureCornerAdaptedTextLayout() {
+        NSLayoutConstraint.deactivate([
+            textViewLeadingConstraint,
+            textViewTrailingConstraint,
+            placeholderLeadingConstraint,
+            placeholderTrailingConstraint
+        ])
+
+        let safeArea = view.layoutGuide(for: .safeArea(cornerAdaptation: .horizontal))
+        NSLayoutConstraint.activate([
+            textView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 16),
+            textView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -16),
+            placeholderLabel.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 16),
+            placeholderLabel.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -16)
         ])
     }
 

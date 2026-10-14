@@ -16,6 +16,11 @@ extension String {
         .omitOther
     ]
 
+    /// Prefer the text's detected language; use the keyboard only as a fallback.
+    func syntaxLanguage(fallback: NLLanguage? = nil) -> NLLanguage? {
+        NLLanguageRecognizer.dominantLanguage(for: self) ?? fallback
+    }
+
     /// Apply syntax highlighting to the attributed string.
     func highlightSyntax(
         theme: Theme,
@@ -99,7 +104,7 @@ extension String {
 
 extension NLTagger {
     func setLanguageHint(_ language: NLLanguage?, for string: String) {
-        guard let language, !string.isEmpty else {
+        guard !string.isEmpty, let language = string.syntaxLanguage(fallback: language) else {
             return
         }
 
@@ -114,9 +119,20 @@ extension NLLanguage {
             return nil
         }
 
-        let baseLanguage = textInputPrimaryLanguage.replacingOccurrences(of: "_", with: "-")
-            .split(separator: "-").first.map(String.init) ?? textInputPrimaryLanguage
-        self.init(baseLanguage)
+        let components = textInputPrimaryLanguage.replacingOccurrences(of: "_", with: "-")
+            .split(separator: "-").map(String.init)
+        guard let baseLanguage = components.first else { return nil }
+        if baseLanguage == "zh" {
+            if components.contains("Hant") || components.contains("TW") || components.contains("HK") || components.contains("MO") {
+                self = .traditionalChinese
+            } else if components.contains("Hans") || components.contains("CN") || components.contains("SG") {
+                self = .simplifiedChinese
+            } else {
+                self.init(baseLanguage)
+            }
+        } else {
+            self.init(baseLanguage)
+        }
     }
 }
 

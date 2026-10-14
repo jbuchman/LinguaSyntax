@@ -204,8 +204,7 @@ class ViewController: UIViewController {
             return
         }
 
-        let language = textView.textInputMode?.naturalLanguageHint
-            ?? NLLanguageRecognizer.dominantLanguage(for: string)
+        let language = string.syntaxLanguage(fallback: textView.textInputMode?.naturalLanguageHint)
         requestLexicalAssetsIfNeeded(for: language)
 
         let fullRange = NSRange(location: 0, length: textView.textStorage.length)

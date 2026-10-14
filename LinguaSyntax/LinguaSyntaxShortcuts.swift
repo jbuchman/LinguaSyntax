@@ -105,7 +105,7 @@ struct ExportPartsOfSpeechIntent: AppIntent {
     static func outputFile(for text: String, outputFormat: PartsOfSpeechOutputFormat, theme: Theme) throws -> IntentFile {
         var summary = text.partsOfSpeech(theme: theme)
         if summary.characters.isEmpty {
-            summary = AttributedString("Words: \(text.wordCount)")
+            summary = AttributedString(String(localized: "Words: \(text.wordCount)"))
         }
 
         switch outputFormat {

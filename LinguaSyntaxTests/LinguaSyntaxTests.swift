@@ -150,6 +150,22 @@ struct StringExtensionTests {
         #expect(NLLanguage(textInputPrimaryLanguage: "de_DE") == .german)
     }
 
+    @Test func chineseKeyboardLanguagesPreserveScript() {
+        #expect(NLLanguage(textInputPrimaryLanguage: "zh-Hans-CN") == .simplifiedChinese)
+        #expect(NLLanguage(textInputPrimaryLanguage: "zh-Hant-TW") == .traditionalChinese)
+        #expect(NLLanguage(textInputPrimaryLanguage: "zh_TW") == .traditionalChinese)
+    }
+
+    @Test func textLanguageTakesPriorityOverKeyboard() {
+        let text = "Le petit chat dort tranquillement dans la maison."
+        #expect(text.syntaxLanguage(fallback: .german) == .french)
+        #expect("".syntaxLanguage(fallback: .german) == .german)
+        let tagger = NLTagger(tagSchemes: [.lexicalClass])
+        tagger.string = text
+        tagger.setLanguageHint(.german, for: text)
+        #expect(tagger.dominantLanguage == .french)
+    }
+
     @Test(arguments: [nil, "emoji"])
     func invalidTextInputLanguageCodeDoesNotCreateNaturalLanguageHint(_ languageCode: String?) {
         #expect(NLLanguage(textInputPrimaryLanguage: languageCode) == nil)
@@ -174,11 +190,11 @@ struct ThemeTests {
         let themeNames = Theme.builtInThemes.map(\.name)
 
         #expect(themeNames == [
-            "Office",
-            "Scholastic",
-            "Editorial",
-            "Blueprint",
-            "Dark"
+            String(localized: "Office"),
+            String(localized: "Scholastic"),
+            String(localized: "Editorial"),
+            String(localized: "Blueprint"),
+            String(localized: "Dark")
         ])
     }
 
@@ -195,7 +211,7 @@ struct ThemeTests {
 
         let theme = Theme.custom(customTheme)
 
-        #expect(theme.name == "Custom")
+        #expect(theme.name == String(localized: "Custom"))
         #expect(theme.interfaceStyle == .light)
         #expect(theme.isBold(for: .noun))
         #expect(theme.isItalic(for: .noun))
@@ -250,7 +266,7 @@ struct ShortcutTests {
             theme: .blueprint
         )
 
-        #expect(String(data: file.data, encoding: .utf8) == "Words: 0")
+        #expect(String(data: file.data, encoding: .utf8) == String(localized: "Words: \(0)"))
     }
 
     @Test func exportPartsOfSpeechIntentCreatesStyledRTFFile() throws {
@@ -285,7 +301,7 @@ struct ShortcutTests {
         )
         let backgroundColor = exportedText.attribute(.backgroundColor, at: 0, effectiveRange: nil) as? UIColor
 
-        #expect(exportedText.string == "Words: 0")
+        #expect(exportedText.string == String(localized: "Words: \(0)"))
         #expect(backgroundColor?.hasSameRGBAComponents(as: Theme.blueprint.backgroundColor) == true)
     }
 }

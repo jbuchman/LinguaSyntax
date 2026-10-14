@@ -142,7 +142,12 @@ struct StringExtensionTests {
     @Test func textInputLanguageCodeCreatesNaturalLanguageHint() throws {
         let language = try #require(NLLanguage(textInputPrimaryLanguage: "es-MX"))
 
-        #expect(language.rawValue == "es-MX")
+        #expect(language == .spanish)
+    }
+
+    @Test func germanKeyboardLanguageUsesSupportedBaseLanguage() {
+        #expect(NLLanguage(textInputPrimaryLanguage: "de-DE") == .german)
+        #expect(NLLanguage(textInputPrimaryLanguage: "de_DE") == .german)
     }
 
     @Test(arguments: [nil, "emoji"])

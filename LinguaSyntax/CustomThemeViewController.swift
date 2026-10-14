@@ -153,7 +153,7 @@ final class CustomThemeViewController: UIViewController, UIColorPickerViewContro
         row.isLayoutMarginsRelativeArrangement = true
         row.directionalLayoutMargins = NSDirectionalEdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 0)
 
-        row.addArrangedSubview(makeColorRow(title: tag.rawValue, color: style.color.uiColor, target: .tag(tag)))
+        row.addArrangedSubview(makeColorRow(title: tag.localizedName, color: style.color.uiColor, target: .tag(tag)))
 
         let controls = makeStyleControl(for: tag, style: style)
 

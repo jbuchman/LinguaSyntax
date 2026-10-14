@@ -86,7 +86,7 @@ extension String {
 
         let separator: AttributedString = ": "
         let attributedStrings = tags.sorted(by: { $0.value > $1.value }).map { (tag, count) -> AttributedString in
-            let label = tag.attributedString(string: tag.rawValue, theme: theme)
+            let label = tag.attributedString(string: tag.localizedName, theme: theme)
             var count = AttributedString(String(count))
             count.foregroundColor = .secondaryLabel
             count.font = theme.font
@@ -103,7 +103,7 @@ extension NLTagger {
             return
         }
 
-        setLanguage(language, range: string.startIndex..<string.endIndex)
+        setLanguage(NLLanguage(textInputPrimaryLanguage: language.rawValue) ?? language, range: string.startIndex..<string.endIndex)
     }
 }
 
@@ -114,7 +114,9 @@ extension NLLanguage {
             return nil
         }
 
-        self.init(textInputPrimaryLanguage)
+        let baseLanguage = textInputPrimaryLanguage.replacingOccurrences(of: "_", with: "-")
+            .split(separator: "-").first.map(String.init) ?? textInputPrimaryLanguage
+        self.init(baseLanguage)
     }
 }
 

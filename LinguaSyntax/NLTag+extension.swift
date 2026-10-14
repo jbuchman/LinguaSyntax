@@ -10,6 +10,30 @@ import NaturalLanguage
 import UIKit
 
 extension NLTag {
+    var localizedName: String {
+        switch self {
+        case .noun: return String(localized: "Noun")
+        case .verb: return String(localized: "Verb")
+        case .adjective: return String(localized: "Adjective")
+        case .adverb: return String(localized: "Adverb")
+        case .pronoun: return String(localized: "Pronoun")
+        case .determiner: return String(localized: "Determiner")
+        case .particle: return String(localized: "Particle")
+        case .preposition: return String(localized: "Preposition")
+        case .number: return String(localized: "Number")
+        case .conjunction: return String(localized: "Conjunction")
+        case .interjection: return String(localized: "Interjection")
+        case .classifier: return String(localized: "Classifier")
+        case .idiom: return String(localized: "Idiom")
+        case .otherWord: return String(localized: "Other Word")
+        case .personalName: return String(localized: "Personal Name")
+        case .placeName: return String(localized: "Place Name")
+        case .organizationName: return String(localized: "Organization Name")
+        default: return rawValue
+        }
+    }
+
+
     /// Apply tag attributes to the specified range.
     public func attributedString(substring: Substring, theme: Theme) -> AttributedString {
         attributedString(string: String(substring), theme: theme)

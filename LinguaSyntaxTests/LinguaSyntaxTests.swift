@@ -171,6 +171,20 @@ struct StringExtensionTests {
         #expect(NLLanguage(textInputPrimaryLanguage: languageCode) == nil)
     }
 
+    @Test func spanishTextReceivesLexicalColors() {
+        let text = "El gato pequeño duerme tranquilamente en la casa."
+        #expect(text.syntaxLanguage(fallback: .spanish) == .spanish)
+        let tagger = NLTagger(tagSchemes: [.lexicalClass])
+        tagger.string = text
+        tagger.setLanguageHint(.spanish, for: text)
+        let tags = tagger.tags(in: text.startIndex..<text.endIndex, unit: .word, scheme: .lexicalClass, options: String.syntaxTaggerOptions).map { $0.0 }
+        #expect(tags.contains(.noun))
+        #expect(tags.contains(.verb))
+        let highlighted = NSAttributedString(text.highlightSyntax(theme: .dark, languageHint: .spanish))
+        let range = (text as NSString).range(of: "gato")
+        #expect(highlighted.attribute(.foregroundColor, at: range.location, effectiveRange: nil) as? UIColor == Theme.dark.foregroundColor(for: .noun))
+    }
+
     @Test func syntaxHighlightingAcceptsLanguageHint() {
         let text = "Hola mundo."
 
